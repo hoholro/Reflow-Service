@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="여러 AI 대화의 요약과 원문을 모아 하던 일을 이어가는 REFLOW 시연용 프로토타입">
+<title>REFLOW | 대화 작업대</title>
+<style>
+:root{color-scheme:light;--base:#f5f4ee;--card:#fffefa;--ink:#202638;--muted:#575d6b;--line:#dddde3;--accent:#302486;--accent-light:#eeebff;--navy:#241c4b;--sage:#e8f2e9;--sage-ink:#254e36;--amber:#f6eddb;--amber-ink:#765019;font-family:Inter,"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--base);color:var(--ink);line-height:1.55;word-break:keep-all;overflow-wrap:anywhere}button,input,select,textarea{font:inherit}button,a,input,select,textarea{touch-action:manipulation}button{cursor:pointer}a{color:var(--accent);text-underline-offset:.22em}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid #805600;outline-offset:3px}[hidden]{display:none!important}h1,h2,h3,p{margin:0}h1,h2,h3{line-height:1.27;letter-spacing:-.04em}.wrap{max-width:1260px;width:calc(100% - 72px);margin:auto}.masthead{background:var(--card);border-bottom:1px solid var(--line)}.masthead .wrap{display:flex;align-items:center;justify-content:space-between;min-height:70px;gap:16px}.brand{display:flex;align-items:center;gap:10px;font-size:1.16rem;font-weight:850;letter-spacing:.11em;color:var(--navy);text-decoration:none}.brand-mark{position:relative;width:26px;height:26px;background:var(--accent);border-radius:8px}.brand-mark:before,.brand-mark:after{content:"";position:absolute;border:1.6px solid #fff;border-radius:3px;width:11px;height:7px;left:6px;top:6px}.brand-mark:after{left:9px;top:11px;background:var(--accent)}.masthead-actions{display:flex;gap:12px;align-items:center}.small-note{font-size:.76rem;color:var(--muted)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:.34rem;padding:.53rem .78rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:.86rem;font-weight:700;text-decoration:none;min-height:39px}.btn:hover{border-color:var(--accent);color:var(--accent)}.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn.ghost{background:transparent}.btn.text{border-color:transparent;padding-inline:.35rem}.hero{background:var(--navy);color:#fff;overflow:hidden}.hero-inner{min-height:223px;position:relative;display:flex;align-items:center;padding:31px 0 42px}.hero-copy{z-index:1;position:relative;max-width:640px}.hero-label{color:#d6cff7;font-size:.8rem;font-weight:700;margin-bottom:.62rem}.hero h1{font-size:clamp(2.15rem,5.4vw,4.1rem);font-weight:830;line-height:1.17}.hero p:last-child{color:#dfdaf2;margin-top:.62rem;font-size:.93rem}.motif{position:absolute;right:2.2%;top:17%;width:245px;height:160px;transform:rotate(-11deg);pointer-events:none}.motif i{display:block;position:absolute;width:155px;height:102px;border:1px solid #a397da;border-radius:18px;background:#483872;top:3px;left:10px;box-shadow:0 14px 22px #17112b45}.motif i:nth-child(2){left:44px;top:21px;background:#7160a7}.motif i:nth-child(3){left:80px;top:40px;background:#a99ae1;border-color:#d9cff5}.motif i:nth-child(3):before,.motif i:nth-child(3):after{content:"";position:absolute;left:20px;top:29px;width:81px;height:7px;border-radius:10px;background:#ede8ff}.motif i:nth-child(3):after{top:47px;width:111px;height:4px;box-shadow:0 12px 0 #ede8ff,0 24px 0 #ede8ff;opacity:.77}.desk{padding:25px 0 44px}.desk-top{display:flex;align-items:end;justify-content:space-between;gap:10px;margin-bottom:13px}.desk-top h2{font-size:1.4rem}.desk-top p{font-size:.83rem;color:var(--muted);margin-top:.2rem}.sort{display:flex;gap:2px;background:#eae8e4;border:1px solid #e2dfdd;padding:3px;border-radius:10px;flex-shrink:0}.sort button{padding:.37rem .67rem;background:transparent;border:1px solid transparent;border-radius:7px;font-size:.84rem;color:#3d4050;font-weight:700}.sort button[aria-pressed=true]{background:var(--card);color:var(--accent);border-color:var(--line);box-shadow:0 1px 2px #0001}.filters{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:12px}.filters label{display:flex;align-items:center;gap:.46rem;font-size:.81rem;color:var(--muted);font-weight:650}.filters label:first-child{flex:1 1 220px}.filters input,.filters select{padding:.47rem .55rem;border:1px solid #aaaaba;background:#fff;border-radius:7px;min-height:39px;color:var(--ink);min-width:0}.filters input{width:100%}.filters select{max-width:100%}.count{color:var(--muted);font-size:.79rem;margin:12px 0 8px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.group{margin-bottom:21px}.group h3{font-size:1.05rem;padding:0 0 7px}.group h3 small{font-size:.75rem;color:var(--muted);margin-left:.4rem}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;min-width:0;box-shadow:0 2px 4px #201a3410}.card:hover{border-color:#aca2d4}.card-main{text-align:left;background:transparent;border:0;padding:14px 14px 12px;width:100%;color:inherit;flex:1;border-radius:11px 11px 0 0}.card-main:hover .card-title{color:var(--accent)}.card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.73rem;color:var(--muted);margin-bottom:9px}.chip{display:inline-block;padding:.13rem .4rem;border-radius:5px;background:#edebf4;color:#392c63;font-size:.72rem;font-weight:740}.chip[data-provider="ChatGPT"]{background:#e4efe8;color:#2b5540}.chip[data-provider="Claude"]{background:#f4e9e0;color:#753e2b}.chip[data-provider="Gemini"]{background:#e7eaf9;color:#303a7a}.card-meta time{margin-left:auto}.card-title{display:block;font-weight:800;font-size:1.13rem;line-height:1.28;letter-spacing:-.035em;margin-bottom:11px}.card-summary{display:grid;gap:6px;font-size:.84rem;line-height:1.35}.summary-line{display:grid;grid-template-columns:3.5rem minmax(0,1fr);gap:5px;align-items:start}.summary-label{color:var(--muted);font-size:.74rem;font-weight:740}.summary-line.next{background:var(--accent-light);color:#302478;border-radius:6px;padding:6px;margin:1px -6px 0;font-weight:740}.summary-line.next .summary-label{color:inherit}.card-footer{padding:8px 13px 9px;border-top:1px solid #ecebf0;display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:.72rem;color:var(--muted)}.card-actions{display:flex;gap:3px;align-items:center}.card-actions .btn{font-size:.73rem;min-height:33px}.review{color:var(--amber-ink)}.review.saved{color:var(--sage-ink)}.empty{padding:26px;text-align:center;background:var(--card);border:1px dashed #aaaaba;border-radius:10px}.foot{color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);padding:14px 0 20px}.foot .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+dialog{width:min(830px,calc(100% - 32px));padding:0;max-height:calc(100dvh - 46px);border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);box-shadow:0 18px 65px #12102252;overflow:auto}dialog::backdrop{background:#211a3b85}dialog.small{width:min(520px,calc(100% - 32px))}.dialog-head{display:flex;align-items:start;justify-content:space-between;gap:12px;padding:17px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card);z-index:2}.dialog-head h2{font-size:1.4rem;margin-top:.28rem}.dialog-body{padding:17px 20px 23px}.detail-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px}.section-title{font-size:1rem;margin-bottom:8px}.detail-summary{padding:12px;border:1px solid var(--line);border-radius:8px}.detail-summary dl{margin:0 0 8px}.detail-summary dt{font-size:.76rem;color:var(--muted);font-weight:750}.detail-summary dd{margin:0 0 9px;font-size:.88rem}.detail-summary dd:last-child{margin-bottom:0}.cue{display:inline-block;margin-top:3px;font-size:.74rem}.detail-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.messages{display:grid;gap:8px;padding:0;margin:0;list-style:none;max-height:400px;overflow:auto;overscroll-behavior:contain}.messages li{border:1px solid transparent;padding:8px 10px;background:#f0f1f5;border-radius:8px;font-size:.88rem}.messages li[data-role="나"]{background:#f0ecfb}.messages li.highlight{background:#fff2c9;border-color:#a66d19}.messages strong,.messages time{font-size:.72rem;color:var(--muted);display:inline-block;margin-right:.4rem}.messages p{white-space:pre-wrap}.field{display:grid;gap:3px;margin-bottom:10px;font-size:.85rem;font-weight:720}.field input,.field textarea,.field select{width:100%;border:1px solid #a0a0b0;border-radius:6px;background:white;color:var(--ink);padding:.42rem .5rem;min-height:37px}.field textarea{min-height:49px;resize:vertical}.extra-fields{margin:10px 0}.extra-fields summary{cursor:pointer;color:var(--accent);font-size:.83rem;font-weight:700;margin-bottom:8px}.form-status{min-height:1.35rem;color:#9b2924;font-size:.82rem}.dialog-foot{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}.demo-copy{font-size:.89rem}.demo-copy li+li{margin-top:5px}.demo-copy p+p{margin-top:9px}.demo-copy ol{padding-left:1.35rem}.origin-note{padding:8px 10px;background:var(--amber);color:var(--amber-ink);border-radius:7px;font-size:.82rem;margin-bottom:10px}.live{position:fixed;bottom:16px;right:16px;max-width:min(420px,calc(100% - 32px));z-index:3;border-radius:8px;background:var(--navy);color:#fff;padding:9px 12px;font-size:.82rem}.live:empty{display:none}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.motif{right:0}.wrap{width:calc(100% - 46px)}}@media(max-width:680px){.wrap{width:calc(100% - 30px)}.masthead .wrap{min-height:58px}.masthead-actions .small-note,.motif{display:none}.hero-inner{min-height:auto;padding:27px 0 31px}.hero h1{font-size:2.35rem}.hero p:last-child{font-size:.85rem}.desk{padding-top:17px}.desk-top{align-items:start}.desk-top h2{font-size:1.22rem}.cards{grid-template-columns:minmax(0,1fr);gap:9px}.detail-grid{grid-template-columns:minmax(0,1fr)}.dialog-head,.dialog-body{padding-inline:13px}.dialog-head h2{font-size:1.13rem}.messages{max-height:330px}}@media(max-width:360px){.desk-top{flex-wrap:wrap}.card-footer{flex-wrap:wrap}}
+</style>
+<style>
+[data-view="workspace"] #chat-shell,[data-view="workspace"] .drawer-top{display:none}
+[data-view="chat"] #workspace-shell{position:fixed;z-index:4;inset:82px 18px 16px auto;width:min(404px,calc(100% - 36px));overflow:auto;overscroll-behavior:contain;background:#f8f7ff;border:1px solid #dbd6ef;border-radius:20px;box-shadow:0 24px 80px #29176735;scrollbar-gutter:stable}
+[data-view="chat"] #workspace-shell .masthead,[data-view="chat"] #workspace-shell .hero,[data-view="chat"] #workspace-shell .foot{display:none}
+[data-view="chat"] #workspace-shell .wrap{width:calc(100% - 28px)}
+[data-view="chat"] #workspace-shell .desk{padding:15px 0 20px}
+[data-view="chat"] #workspace-shell .cards{grid-template-columns:minmax(0,1fr)}
+[data-view="chat"] #workspace-shell .filters{padding:8px;gap:6px}
+[data-view="chat"] #workspace-shell .filters label:first-child{flex-basis:100%}
+[data-view="chat"] #workspace-shell .card{box-shadow:none}
+[data-view="chat"] #workspace-shell .desk-top h2{font-size:1rem}
+[data-view="chat"] #workspace-shell .desk-top p{font-size:.75rem}
+.drawer-top{padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f8f7ff;border-bottom:1px solid #e3def2;position:sticky;z-index:1;top:0}
+.drawer-top .brand{font-size:1rem}
+.chat-shell{--host-bg:#fff;--host-side:#f7f7f8;--host-rule:#e7e6e9;--host-tone:#222329;--host-message:#f0f0f2;background:var(--host-bg);color:var(--host-tone);min-height:100dvh;display:grid;grid-template-columns:236px minmax(0,1fr)}
+.chat-shell[data-provider="Claude"]{--host-bg:#fcfaf5;--host-side:#f3efe7;--host-rule:#e9e1d6;--host-tone:#342e27;--host-message:#f2ebe0}
+.host-nav{background:var(--host-side);border-right:1px solid var(--host-rule);padding:21px 14px;min-width:0}
+.host-name{font-size:1.12rem;letter-spacing:-.02em;font-weight:800;padding:0 7px}
+.host-nav p{font-size:.73rem;font-weight:700;color:var(--muted);margin:22px 7px 6px}
+.host-nav button{display:block;border:0;background:transparent;text-align:left;padding:.48rem .55rem;width:100%;border-radius:8px;font-size:.8rem;color:inherit;margin-top:3px}
+.host-nav button[aria-current="true"],.host-nav button:hover{background:var(--host-message);font-weight:750}
+.host-main{min-width:0;display:flex;flex-direction:column;min-height:100dvh}
+.host-top{position:sticky;top:0;z-index:2;padding:9px 17px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--host-bg);border-bottom:1px solid var(--host-rule)}
+.host-switch,.host-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.host-switch button{padding:.38rem .56rem;border-radius:7px;border:1px solid transparent;background:transparent;color:inherit;font-size:.85rem;font-weight:700}
+.host-switch button[aria-pressed="true"]{background:var(--host-message);border-color:var(--host-rule)}
+.host-actions .btn{font-size:.76rem}
+.launch{border-radius:24px!important;background:#302486!important;color:#fff!important;border-color:#302486!important;padding-inline:.82rem!important}
+.launch .brand-mark{width:19px;height:19px;background:transparent}
+.launch .brand-mark:before,.launch .brand-mark:after{width:9px;height:6px;left:2px;top:3px}
+.launch .brand-mark:after{left:5px;top:7px}
+.host-body{width:min(730px,calc(100% - 42px));margin:0 auto;padding:40px 0 25px;flex:1}
+.host-context{font-size:.77rem;color:var(--muted);margin-bottom:.55rem}
+.host-title{font-size:clamp(1.25rem,3.5vw,1.9rem);margin-bottom:1.65rem}
+.chat-shell[data-provider="Claude"] .host-title{font-family:Georgia,"Malgun Gothic",serif}
+.host-thread{margin:0;padding:0;list-style:none;display:grid;gap:1rem}
+.host-turn{display:flex;flex-direction:column;align-items:flex-start;gap:.26rem;min-width:0}
+.host-turn.own{align-items:flex-end}
+.host-turn strong{font-size:.74rem;color:var(--muted)}
+.host-turn p{max-width:90%;font-size:.91rem;white-space:pre-wrap}
+.host-turn.own p{padding:.58rem .8rem;border-radius:15px 15px 4px 15px;background:var(--host-message)}
+.host-composer{margin:auto auto 0;width:min(730px,calc(100% - 42px));padding:0 0 12px}
+.composer-input{display:flex;align-items:end;gap:8px;border:1px solid #c7c5ce;border-radius:17px;background:#fff;padding:9px}
+.composer-input textarea{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);padding:.4rem;resize:vertical;max-height:120px}
+.host-composer .small-note{margin-top:5px}
+.host-resumed{display:inline-block;margin-bottom:.56rem;padding:.2rem .5rem;border-radius:5px;background:var(--accent-light);color:var(--accent);font-size:.76rem;font-weight:750}
+@media(min-width:1150px){body[data-view="chat"][data-panel="open"] .host-main{padding-right:422px}body[data-view="chat"][data-panel="open"] .host-top{margin-right:-422px}}
+@media(max-width:730px){.chat-shell{grid-template-columns:minmax(0,1fr)}.host-nav{display:none}.host-top{padding:8px 10px}.host-actions{gap:3px}.host-actions .btn{padding:.35rem .5rem}.host-body{padding:26px 0 24px}.host-body,.host-composer{width:calc(100% - 28px)}[data-view="chat"] #workspace-shell{inset:76px 8px 8px;width:auto;border-radius:14px}}
+</style>
+</head>
+<body data-view="chat">
+<section class="chat-shell" id="chat-shell" aria-label="AI 채팅 시연 화면">
+  <aside class="host-nav" aria-label="현재 AI의 대화 목록"><div class="host-name" id="host-name">ChatGPT</div><p>최근 대화</p><nav id="host-recent" aria-label="이 AI의 최근 대화"></nav></aside>
+  <main class="host-main" id="host-main">
+    <header class="host-top"><div class="host-switch" role="group" aria-label="시연할 AI 화면"><button type="button" data-host="ChatGPT">ChatGPT</button><button type="button" data-host="Claude">Claude</button></div><div class="host-actions"><a class="btn text" href="?view=workspace">전체 작업대</a><button type="button" class="btn text" data-guide>시연 안내</button><button type="button" class="btn launch" id="panel-toggle" aria-controls="workspace-shell" aria-expanded="false"><span class="brand-mark" aria-hidden="true"></span>REFLOW</button></div></header>
+    <section class="host-body" aria-labelledby="host-title"><p class="host-context">가상 채팅 화면 / 7조 시연</p><p id="host-resumed" class="host-resumed" role="status" hidden></p><h1 class="host-title" id="host-title" tabindex="-1"></h1><ol class="host-thread" id="host-thread" aria-label="현재 대화"></ol></section>
+    <form class="host-composer" id="host-form"><div class="composer-input"><textarea id="host-draft" placeholder="이 대화에서 이어서 쓸 내용" aria-label="시연용 메시지" rows="1" maxlength="280" required></textarea><button class="btn" type="submit">남기기</button></div><p class="small-note">입력은 시연 화면에만 표시됩니다.</p></form>
+  </main>
+</section>
+<section id="workspace-shell" aria-label="REFLOW 대화 패널" hidden>
+<div class="drawer-top"><span class="brand"><span class="brand-mark" aria-hidden="true"></span>REFLOW</span><button class="btn ghost" id="panel-close" type="button">패널 닫기</button></div>
+<header class="masthead"><div class="wrap"><a class="brand" href="#workspace"><span class="brand-mark" aria-hidden="true"></span>REFLOW</a><div class="masthead-actions"><span class="small-note">7조 발표용 / 가상 대화</span><a class="btn text" href="?view=chat">채팅 시연</a><button class="btn ghost" type="button" data-guide>시연 안내</button></div></div></header>
+<div>
+<section class="hero" aria-labelledby="hero-title"><div class="wrap hero-inner"><div class="hero-copy"><p class="hero-label">여러 AI 대화를 한곳에</p><h1 id="hero-title">하던 일, 이어서.</h1><p>어디까지 정했는지 확인하고, 이어갈 대화로 돌아가세요.</p></div><div class="motif" aria-hidden="true"><i></i><i></i><i></i></div></div></section>
+<section class="wrap desk" id="workspace" aria-labelledby="workspace-title">
+<div class="desk-top"><div><h2 id="workspace-title">내 대화</h2><p>카드를 누르면 대화 원문이 열립니다.</p></div><div class="sort" role="group" aria-label="대화 정렬"><button type="button" aria-pressed="true" data-sort="recent">최신 순</button><button type="button" aria-pressed="false" data-sort="theme">테마 순</button></div></div>
+<div class="filters"><label for="search">검색<input id="search" type="search" placeholder="대화 제목, 주제, 요약 검색" autocomplete="off"></label><label for="provider">AI<select id="provider"><option value="">전체</option></select></label><button type="button" class="btn text" id="clear-filters" hidden>검색 초기화</button></div>
+<p class="count" id="count" role="status"></p><div id="list"></div>
+</section>
+</div>
+<footer class="foot"><div class="wrap"><span>가상 대화로 체험할 수 있습니다. 카드 수정은 이 브라우저에 저장됩니다.</span><button class="btn text" id="reset-button" type="button">시연 카드 초기화</button></div></footer>
+</section>
+<dialog id="detail" aria-labelledby="detail-title"></dialog>
+<dialog id="edit" class="small" aria-labelledby="edit-title"></dialog>
+<dialog id="guide" class="small" aria-labelledby="guide-title"><div class="dialog-head"><h2 id="guide-title">1분 시연</h2><button type="button" class="btn ghost" data-close>닫기</button></div><div class="dialog-body demo-copy"><ol><li>ChatGPT 상단에서 <strong>REFLOW</strong>를 열고 <strong>발표 자료 마감 맞추기</strong> 카드를 고릅니다.</li><li>‘확정’ 아래 <strong>근거 보기</strong>를 누릅니다. AI가 금요일을 제안했지만 팀은 목요일 20시로 바꿨습니다.</li><li><strong>수정</strong>으로 요약을 고칩니다. <strong>바로 가기</strong>를 누르면 Claude의 해당 대화 화면이 열립니다.</li></ol><p>ChatGPT와 Claude는 시연용 화면입니다. 실제 대화 링크는 수정 화면에서 직접 연결할 수 있습니다. 열 때 해당 서비스의 로그인과 열람 권한이 필요할 수 있습니다.</p><details class="extra-fields"><summary>발표 준비 / 이 화면에서 검증할 것</summary><p>같은 카드와 원문을 제공한 상태에서 전체 작업대를 열 때와 채팅 위에서 패널을 열 때를 비교할 수 있습니다. 현재 채팅에서 다른 대화를 찾기까지 걸린 시간, 처음 고른 대화의 정확도, 비교를 위해 열어 본 창 수를 기록합니다.</p></details><div class="dialog-foot"><button class="btn primary" id="guided-start" type="button">마감 사례 열기</button></div></div></dialog>
+<dialog id="reset" class="small" aria-labelledby="reset-title"><div class="dialog-head"><h2 id="reset-title">시연 카드 초기화</h2><button type="button" class="btn ghost" data-close>닫기</button></div><div class="dialog-body"><p>이 브라우저에서 수정한 카드와 연결한 링크를 지우고 처음 예시로 돌아갑니다.</p><div class="dialog-foot"><button type="button" class="btn" data-close>취소</button><button type="button" class="btn primary" id="confirm-reset">초기화</button></div></div></dialog>
+<div class="live" id="notice" role="status" aria-live="polite"></div>
+<noscript><p class="wrap">카드와 대화 원문을 열려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
+<script>
+'use strict';
+const row=(role,time,text)=>({role,time,text});
+const make=(id,provider,theme,title,stamp,summary,refs,messages)=>({id,provider,theme,title,stamp,summary,refs,messages,link:'',edited:false});
+const seed=[
+  make('deck','Claude','UX 팀 과제','발표 자료 마감 맞추기','2026-11-17T10:40:00+09:00', ['금요일 오전까지 각자 슬라이드 업로드','리허설 시간','각자 맡은 슬라이드를 한 파일에 붙이기'],[3,4,5],[
+    row('나','10:20','조별 발표 슬라이드를 모으는 일정을 짜줘. 발표는 다음 주 월요일이야.'),row('Claude','10:23','금요일 오전까지 각자 파일을 올리고 주말에 합치는 일정은 어떨까요?'),row('나','10:26','처음엔 그게 괜찮아 보이는데, 주말에는 확인할 사람이 별로 없어.'),row('나','10:32','마감은 금요일 오전 대신 목요일 20시로 확정할게. 주말 전에 전체 덱을 확인해야 해.'),row('Claude','10:34','알겠습니다. 공지에는 목요일 20시만 넣고, 리허설 시간은 팀 투표가 끝난 뒤 안내하겠습니다.'),row('나','10:40','다음에는 각자 맡은 슬라이드를 한 파일에 붙이자. 7조 폴더의 발표 자료를 쓰면 돼.')]),
+  make('survey','ChatGPT','UX 팀 과제','AI 대화 사용 경험 설문','2026-11-17T09:25:00+09:00',['목표 응답 50명','모집 채널과 배포 날짜','동료 3명에게 문항을 먼저 읽혀 보기'],[2,2,3],[
+    row('나','09:10','AI 창을 오가다 맥락을 잃는 경험을 조사하려고 해. 어떤 질문이 좋을까?'),row('ChatGPT','09:13','최근 7일간 몇 개의 AI를 썼는지, 찾던 대화나 결정이 있었는지, 어떻게 복구했는지를 차례로 물어보세요.'),row('나','09:18','응답 50명을 목표로 잡자. 모집 채널과 배포 날짜는 팀에서 정할게.'),row('ChatGPT','09:25','배포 전 동료 3명에게 먼저 읽혀서 “맥락” 같은 표현을 어떻게 이해하는지 확인해 보세요.')]),
+  make('lodging','Gemini','가족여행','가족여행 숙소 조건 정리','2026-11-16T21:10:00+09:00',['경주, 엘리베이터가 있는 숙소','1박 예산 상한','역 근처 후보 세 곳의 취소 조건 비교'],[2,2,3],[
+    row('나','20:54','부모님과 2박 3일 갈 곳을 찾고 있어. 제주와 경주 중 고민이야.'),row('Gemini','20:58','부모님의 이동 부담을 줄이려면 경주역과 주요 방문지 사이의 이동 수단을 함께 확인해 보세요.'),row('나','21:03','경주로 정했어. 숙소는 엘리베이터가 있어야 해. 1박 예산은 가족한테 물어보고 결정할게.'),row('Gemini','21:10','다음에는 역 근처 후보 세 곳의 취소 가능 날짜를 같은 기준으로 비교해 보세요.')]),
+  make('report','Claude','업무 보고','분기 보고서 첫 장 다듬기','2026-11-16T17:45:00+09:00',['첫 장에 핵심 결과 세 줄','비교 기준을 전년으로 할지 전분기로 할지','팀장 피드백을 반영해 첫 장 수정'],[2,2,3],[
+    row('나','17:23','분기 보고서를 처음 보는 팀원이 1분 안에 읽게 하고 싶어.'),row('Claude','17:31','핵심 결과, 그 이유, 다음 조치를 첫 장에 한 줄씩 두는 방법이 있습니다.'),row('나','17:40','첫 장은 핵심 결과 세 줄로 고정하자. 어떤 분기와 비교할지는 아직 안 정했어.'),row('Claude','17:45','팀장 피드백을 받은 뒤 첫 장 문구를 먼저 수정할 수 있습니다.')]),
+  make('research','Perplexity','UX 팀 과제','작업 재개 선행연구 읽기','2026-11-16T13:40:00+09:00',['Altmann과 Trafton의 복귀 단서 연구 읽기','국내 연구 포함 여부','실험이 복귀 시간을 어떻게 쟀는지 원문에서 확인'],[2,2,3],[
+    row('나','13:20','중단한 작업에 돌아올 때 다음 행동을 보여주면 도움이 되는지 보고 싶어.'),row('Perplexity','13:29','Task Interruption: Resumption Lag and the Role of Cues를 먼저 살펴볼 수 있습니다.'),row('나','13:35','이 논문을 먼저 읽자. 국내 연구도 넣을지는 같이 결정하자.'),row('Perplexity','13:40','연구진이 복귀 시간을 어디서부터 어디까지 쟀는지 실험 방법에서 확인해 보세요.')]),
+  make('chart','ChatGPT','업무 보고','월별 지표 차트 고르기','2026-11-15T16:50:00+09:00',['월별 추세는 꺾은선','일부 부서를 나눠 보여줄지','월별 추세 초안에 빠진 값 표시'],[2,2,3],[
+    row('나','16:31','월별 추세를 보고용 차트로 간단히 보여주고 싶어.'),row('ChatGPT','16:37','시간에 따른 변화는 꺾은선으로 보여주면 흐름을 읽기 쉽습니다.'),row('나','16:46','꺾은선으로 하자. 부서별로 나눌지는 아직 정하지 말고.'),row('ChatGPT','16:50','다음에는 초안을 그린 뒤 빠진 값이 0처럼 보이지 않게 표시하세요.')]),
+  make('meal','ChatGPT','가족여행','부모님과 갈 식당 찾기','2026-11-15T12:15:00+09:00',['입식 좌석과 계단 없는 입구','예약할 식당','경주 숙소 주변의 후보 두 곳 확인'],[2,2,3],[
+    row('나','11:52','부모님 모시고 갈 식당을 찾아야 해. 좌식은 오래 앉기 어려워하셔.'),row('ChatGPT','12:00','입식 좌석, 주차장과 입구 사이의 단차, 예약 가능 여부를 함께 확인해 보세요.'),row('나','12:09','입식 좌석에 계단이 없는 입구로 정하자. 식당 자체는 아직 못 골랐어.'),row('ChatGPT','12:15','숙소가 정해지면 주변에서 조건이 맞는 식당 두 곳을 확인해 보세요.')]),
+  make('mail','Gemini','영어 공부','영어 이메일 답장 연습','2026-11-14T20:20:00+09:00',['요청, 답변, 다음 일정 순서','첫 인사의 격식','같은 요청에 답장 두 가지 써 보기'],[2,2,3],[
+    row('나','20:01','영어로 회의 일정 조정 메일 답장을 연습하고 싶어.'),row('Gemini','20:07','요청을 확인하고, 가능한 일정을 제안한 뒤 다음 행동을 묻는 방식으로 정리할 수 있어요.'),row('나','20:15','그 순서는 유지하자. 인사는 상대에 따라 어느 정도 격식이 적당할지 더 볼게.'),row('Gemini','20:20','같은 요청에 대해 친한 동료용과 처음 연락하는 상대용 답장을 각각 써 보세요.')])
+];
+const providers={ChatGPT:['chatgpt.com','chat.openai.com'],Claude:['claude.ai'],Gemini:['gemini.google.com'],Perplexity:['perplexity.ai','www.perplexity.ai']};
+const labels=['확정','미정','다음 행동'];
+const $=id=>document.getElementById(id);
+const encode=value=>String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const storageKey='team7-reflow-demo-v1';
+const dateFormat=new Intl.DateTimeFormat('ko-KR',{month:'numeric',day:'numeric',timeZone:'Asia/Seoul'});
+const fullDateFormat=new Intl.DateTimeFormat('ko-KR',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Seoul'});
+let edits={},sort='recent',noticeTimer,listFocus=null;
+const workspaceView=new URLSearchParams(location.search).get('view')==='workspace';
+let activeHost='survey';
+const drafts=new Map();
+try { edits=JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch { edits={}; }
+const getCards=()=>seed.map(card=>({...card,...edits[card.id]}));
+const getCard=id=>getCards().find(card=>card.id===id);
+const cardDate=card=>new Date(card.stamp);
+
+function visibleCards(cards,query='',provider=''){
+  const tokens=query.trim().toLocaleLowerCase('ko').split(/\s+/).filter(Boolean);
+  return cards.filter(card=>{
+    const text=[card.title,card.theme,card.provider,...card.summary].join(' ').toLocaleLowerCase('ko');
+    return (!provider||card.provider===provider)&&tokens.every(token=>text.includes(token));
+  }).sort((a,b)=>cardDate(b)-cardDate(a));
+}
+function groupCards(cards){
+  const groups=new Map();
+  for(const card of cards){if(!groups.has(card.theme))groups.set(card.theme,[]);groups.get(card.theme).push(card);}
+  return [...groups].sort(([a],[b])=>a.localeCompare(b,'ko'));
+}
+function setPanel(open,focus=true){
+  if(workspaceView)return;
+  $('workspace-shell').hidden=!open;
+  document.body.dataset.panel=open?'open':'closed';
+  $('panel-toggle').setAttribute('aria-expanded',String(open));
+  if(focus)(open?$('panel-close'):$('panel-toggle')).focus();
+}
+function renderHost(id,resumed=false){
+  const card=seed.find(item=>item.id===id);
+  if(!card)return;
+  activeHost=id;
+  $('chat-shell').dataset.provider=card.provider;
+  $('host-name').textContent=card.provider;
+  $('host-title').textContent=card.title;
+  $('host-resumed').hidden=!resumed;
+  $('host-resumed').textContent=resumed?`REFLOW에서 열었습니다 / ${card.provider}`:'';
+  document.querySelectorAll('[data-host]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.host===card.provider)));
+  $('host-recent').innerHTML=seed.filter(item=>item.provider===card.provider).map(item=>`<button type="button" data-host-card="${item.id}" aria-current="${item.id===id}">${encode(item.title)}</button>`).join('');
+  const messages=card.messages.concat(drafts.get(id)||[]);
+  $('host-thread').innerHTML=messages.map(message=>`<li class="host-turn${message.role==='나'?' own':''}"><strong>${encode(message.role)}</strong><p>${encode(message.text)}</p></li>`).join('');
+}
+function selectHost(id){
+  history.replaceState({host:id},'',location.pathname+location.search);
+  $('host-draft').value='';renderHost(id);
+}
+function demoRoute(card){return `#original-${card.id}`;}
+function cardLink(card, extra=''){
+  const href=card.link||demoRoute(card);
+  return `<a class="btn ${extra}" href="${encode(href)}" ${card.link?'target="_blank" rel="noopener noreferrer"':`data-original="${card.id}"`} aria-label="${encode(card.title)} 바로 가기${card.link?'':' (시연)'}">바로 가기 <span aria-hidden="true">↗</span></a>`;
+}
+function cardHtml(card){
+  const summary=card.summary.map((text,i)=>`<span class="summary-line${i===2?' next':''}"><span class="summary-label">${labels[i]}</span><span>${encode(text)}</span></span>`).join('');
+  return `<article class="card" data-card="${card.id}"><button class="card-main" type="button" data-open="${card.id}" aria-label="${encode(card.title)} 대화 원문 보기" aria-describedby="summary-for-${card.id}"><span class="card-meta"><span class="chip" data-provider="${card.provider}">${card.provider}</span><span>${encode(card.theme)}</span><time datetime="${card.stamp}" title="${fullDateFormat.format(cardDate(card))}">${dateFormat.format(cardDate(card))}</time></span><span class="card-title">${encode(card.title)}</span><span class="card-summary" id="summary-for-${card.id}">${summary}</span></button><footer class="card-footer"><span class="review${card.edited?' saved':''}">${card.edited?'사용자 수정':card.id==='deck'?'확인 필요':'요약 초안'}</span><span class="card-actions"><button class="btn text" type="button" data-edit="${card.id}" aria-label="${encode(card.title)} 요약 수정">수정</button>${cardLink(card,'ghost')}</span></footer></article>`;
+}
+function renderList(){
+  const cards=visibleCards(getCards(),$('search').value,$('provider').value);
+  $('count').textContent=`대화 ${cards.length}개${sort==='theme'?' / 테마 안에서 최신 순':''}`;
+  $('clear-filters').hidden=!$('search').value&&!$('provider').value;
+  if(!cards.length){$('list').innerHTML='<p class="empty">조건에 맞는 대화가 없습니다. 검색어 또는 AI 필터를 바꿔 보세요.</p>';return;}
+  if(sort==='recent'){$('list').innerHTML=`<div class="cards">${cards.map(cardHtml).join('')}</div>`;return;}
+  $('list').innerHTML=groupCards(cards).map(([theme,list])=>`<section class="group"><h3>${encode(theme)} <small>${list.length}개</small></h3><div class="cards">${list.map(cardHtml).join('')}</div></section>`).join('');
+}
+function announce(text){window.clearTimeout(noticeTimer);$('notice').textContent=text;noticeTimer=window.setTimeout(()=>$('notice').textContent='',4000);}
+function saveEdits(){try{localStorage.setItem(storageKey,JSON.stringify(edits));return true;}catch{return false;}}
+function show(detail,title,tag,body){
+  detail.innerHTML=`<div class="dialog-head"><div>${tag||''}<h2 id="${detail.id}-title">${encode(title)}</h2></div><button class="btn ghost" type="button" data-close>닫기</button></div><div class="dialog-body">${body}</div>`;
+  if(!detail.open)detail.showModal();
+}
+function transcript(card){
+  return `<ol class="messages" aria-label="대화 원문">${card.messages.map((message,i)=>`<li data-role="${encode(message.role)}" tabindex="-1" data-message="${i}"><strong>${encode(message.role)}</strong><time>${encode(message.time)}</time><p>${encode(message.text)}</p></li>`).join('')}</ol>`;
+}
+function showDetail(card,original=false){
+  const detail=$('detail');
+  detail.dataset.card=card.id;
+  detail.dataset.original=String(original);
+  const tag=`<span class="chip" data-provider="${card.provider}">${card.provider}</span> <span class="small-note">${encode(card.theme)}</span>`;
+  if(original){show(detail,card.title,tag,`<p class="origin-note">바로 가기 시연 / ${card.provider}의 해당 대화를 여는 화면입니다.</p><h3 class="section-title">대화 원문</h3>${transcript(card)}<div class="dialog-foot"><button type="button" class="btn" data-back-card="${card.id}">요약카드 보기</button></div>`);return;}
+  const lines=card.summary.map((text,i)=>`<dt>${labels[i]}</dt><dd>${encode(text)}<br><button type="button" class="btn text cue" data-jump="${card.refs[i]}" aria-label="${labels[i]} 근거 보기">${card.edited?'관련 원문':'근거 보기'} ↘</button></dd>`).join('');
+  const note=card.id==='deck'&&!card.edited?'<p class="origin-note">마감이 대화 중 바뀌었습니다. ‘확정’의 근거를 확인해 보세요.</p>':'';
+  show(detail,card.title,tag,`${note}<div class="detail-grid"><section><h3 class="section-title">요약카드</h3><div class="detail-summary"><dl>${lines}</dl><span class="small-note">${card.edited?'사용자가 수정한 내용':'요약 초안 / 원문으로 확인 가능'}</span></div><div class="detail-actions"><button type="button" class="btn" data-edit="${card.id}">수정</button>${cardLink(card,'primary')}</div></section><section><h3 class="section-title">대화 원문</h3>${transcript(card)}</section></div>`);
+}
+function openEdit(card){
+  const fields=card.summary.map((text,i)=>`<label class="field" for="summary-${i}">${labels[i]}<textarea id="summary-${i}" maxlength="145" required>${encode(text)}</textarea></label>`).join('');
+  show($('edit'),'요약카드 수정','',`<form id="edit-form" data-card="${card.id}"><label class="field" for="card-title">제목<input id="card-title" maxlength="64" value="${encode(card.title)}" required></label><label class="field" for="card-theme">테마<input id="card-theme" maxlength="30" value="${encode(card.theme)}" required></label>${fields}<details class="extra-fields"${card.link?' open':''}><summary>원본 링크 연결</summary><label class="field" for="card-link">${card.provider} 대화 주소<input id="card-link" type="url" inputmode="url" maxlength="1500" value="${encode(card.link)}" placeholder="https://…"></label><p class="small-note">원래 대화 주소를 붙여넣으면 바로 가기가 그 주소로 연결됩니다.</p></details><p id="form-status" class="form-status" role="alert"></p><div class="dialog-foot"><button class="btn" type="button" data-close>취소</button><button class="btn primary" type="submit">저장</button></div></form>`);
+}
+function checkLink(value,provider){
+  if(!value)return '';
+  try{
+    const url=new URL(value);
+    if(url.protocol!=='https:'||url.username||url.password||url.port||!providers[provider].includes(url.hostname)||url.pathname==='/')return null;
+    return url.href;
+  }catch{return null;}
+}
+function clearOriginal(){if(location.hash.startsWith('#original-'))history.replaceState(null,'',location.pathname+location.search);}
+function setOriginal(card){
+  if(location.hash!==demoRoute(card)){
+    if(!workspaceView&&!location.hash)history.replaceState({host:activeHost},'');
+    history.pushState({host:card.id},'',demoRoute(card));
+  }
+  if(workspaceView){showDetail(card,true);return;}
+  if($('detail').open)$('detail').close();
+  listFocus=null;
+  setPanel(false,false);
+  $('host-draft').value='';
+  renderHost(card.id,true);
+  window.scrollTo(0,0);
+  $('host-title').focus({preventScroll:true});
+}
+function restoreListFocus(){if(listFocus){const selector=`[data-${listFocus.action}="${listFocus.id}"]`;$("list").querySelector(selector)?.focus();listFocus=null;}}
+
+for(const provider of Object.keys(providers))$('provider').add(new Option(provider,provider));
+document.querySelectorAll('[data-sort]').forEach(button=>button.addEventListener('click',()=>{
+  sort=button.dataset.sort;
+  document.querySelectorAll('[data-sort]').forEach(choice=>choice.setAttribute('aria-pressed',String(choice===button)));
+  renderList();
+}));
+$('search').addEventListener('input',renderList);
+$('provider').addEventListener('change',renderList);
+$('clear-filters').addEventListener('click',()=>{$('search').value='';$('provider').value='';renderList();$('search').focus();});
+document.querySelectorAll('[data-guide]').forEach(button=>button.addEventListener('click',()=>$('guide').showModal()));
+$('panel-toggle').addEventListener('click',()=>setPanel($('workspace-shell').hidden));
+$('panel-close').addEventListener('click',()=>setPanel(false));
+document.querySelectorAll('[data-host]').forEach(button=>button.addEventListener('click',()=>{
+  const first=seed.find(card=>card.provider===button.dataset.host);
+  selectHost(first.id);
+}));
+$('host-recent').addEventListener('click',event=>{
+  const button=event.target.closest('[data-host-card]');
+  if(!button)return;
+  selectHost(button.dataset.hostCard);$('host-title').focus();
+});
+$('host-form').addEventListener('submit',event=>{
+  event.preventDefault();
+  const text=$('host-draft').value.trim();
+  if(!text)return;
+  drafts.set(activeHost,[...(drafts.get(activeHost)||[]),row('나','',text)]);
+  $('host-draft').value='';
+  renderHost(activeHost,!$('host-resumed').hidden);
+  $('host-thread').lastElementChild?.scrollIntoView({block:'nearest'});
+});
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!workspaceView&&!$('workspace-shell').hidden&&!document.querySelector('dialog[open]'))setPanel(false);
+});
+$('reset-button').addEventListener('click',()=>$('reset').showModal());
+$('confirm-reset').addEventListener('click',()=>{edits={};const saved=saveEdits();renderList();$('reset').close();announce(saved?'시연 카드를 초기화했습니다.':'현재 화면의 예시를 초기화했습니다.');});
+$('guided-start').addEventListener('click',()=>{$('guide').close();setPanel(true,false);showDetail(getCard('deck'));});
+document.addEventListener('click',event=>{
+  const action=event.target.closest('[data-close],[data-open],[data-original],[data-back-card],[data-edit],[data-jump]');
+  if(!action)return;
+  const data=action.dataset;
+  if('close' in data){action.closest('dialog').close();return;}
+  if(data.open){listFocus={action:'open',id:data.open};showDetail(getCard(data.open));return;}
+  if(data.original){event.preventDefault();if(!$('detail').open)listFocus={action:'original',id:data.original};setOriginal(getCard(data.original));return;}
+  if(data.backCard){clearOriginal();showDetail(getCard(data.backCard));return;}
+  if(data.edit){if(!$('detail').open)listFocus={action:'edit',id:data.edit};openEdit(getCard(data.edit));return;}
+  const log=$('detail').querySelector('.messages');
+  const target=log.querySelector(`[data-message="${data.jump}"]`);
+  if(target){log.querySelector('.highlight')?.classList.remove('highlight');target.classList.add('highlight');log.scrollTop+=target.getBoundingClientRect().top-log.getBoundingClientRect().top-8;target.scrollIntoView({block:'nearest'});target.focus({preventScroll:true});}
+});
+document.addEventListener('submit',event=>{
+  if(event.target.id!=='edit-form')return;
+  event.preventDefault();
+  const card=getCard(event.target.dataset.card);
+  const title=$('card-title').value.trim(),theme=$('card-theme').value.trim();
+  const summary=labels.map((_,i)=>$(`summary-${i}`).value.trim());
+  const link=checkLink($('card-link').value.trim(),card.provider);
+  if(!title||!theme||summary.some(text=>!text)){$('form-status').textContent='제목, 테마와 요약을 모두 채워 주세요.';return;}
+  if(link===null){$('card-link').closest('details').open=true;$('form-status').textContent=`${card.provider}의 HTTPS 대화 주소를 확인해 주세요.`;$('card-link').focus();return;}
+  edits[card.id]={title,theme,summary,link,edited:true};
+  const saved=saveEdits();
+  renderList();$('edit').close();
+  if($('detail').open)showDetail(getCard(card.id));
+  announce(saved?'요약카드를 이 브라우저에 저장했습니다.':'현재 화면에 반영했습니다. 브라우저 저장을 사용할 수 없습니다.');
+});
+$('detail').addEventListener('close',()=>{if(workspaceView)clearOriginal();restoreListFocus();});
+$('edit').addEventListener('close',()=>{if(!$('detail').open)restoreListFocus();});
+function readRoute(){
+  const match=location.hash.match(/^#original-([a-z]+)$/);
+  const card=match&&getCard(match[1]);
+  if(card){if(workspaceView)showDetail(card,true);else setOriginal(card);}
+  else if(workspaceView&&$('detail').open&&$('detail').dataset.original==='true')showDetail(getCard($('detail').dataset.card));
+  else if(!workspaceView&&history.state?.host)renderHost(history.state.host);
+  else if(!workspaceView)renderHost('survey');
+}
+window.addEventListener('hashchange',readRoute);
+document.body.dataset.view=workspaceView?'workspace':'chat';
+$('workspace-shell').hidden=!workspaceView;
+renderHost(activeHost);renderList();readRoute();
+</script>
+</body>
+</html>
