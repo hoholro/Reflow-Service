@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="여러 AI 대화를 테마별 카드로 모아 보는 대화 작업대, REFLOW 시연용 프로토타입">
+<meta name="color-scheme" content="light dark">
 <title>REFLOW</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' ry='4' fill='%23241C4B'/%3E%3Cpath fill='%23FFFFFF' d='M10.2 8.5h6.1c3.05 0 5.05 1.7 5.05 4.35 0 2.15-1.2 3.55-3.15 4.05l3.55 6.6h-3.55l-3.25-6.15h-1.65v6.15H10.2V8.5zm3.1 2.45v4.2h2.45c1.55 0 2.45-.8 2.45-2.1s-.9-2.1-2.45-2.1H13.3z'/%3E%3C/svg%3E" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
@@ -64,6 +65,16 @@
   --focus-ring: 2px solid var(--color-primary-sub);
   --focus-ring-offset: 2px;
 
+  /* Motion — Emil Kowalski /animate */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-press: 140ms;
+  --duration-ui: 200ms;
+  --duration-modal: 250ms;
+  --duration-drawer: 320ms;
+  --duration-toast: 400ms;
+
   /* Typography */
   --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --fs-h1: 20px; --fs-h2: 18px; --fs-h3: 16px; --fs-body: 14px; --fs-small: 12px;
@@ -71,11 +82,40 @@
   --lh-base: 1.4; --lh-button: 1;
 }
 
+/* 다크 모드 — 시맨틱 토큰만 다시 매핑 (프리미티브는 유지) */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-primary-main: var(--indigo-300);
+  --color-primary-sub: var(--indigo-400);
+  --color-primary-light: var(--indigo-500);
+  --color-primary-point: var(--ochre-300);
+  --color-text-primary: var(--gray-50);
+  --color-text-secondary: var(--gray-400);
+  --color-text-tertiary: var(--gray-500);
+  --color-text-disabled: var(--gray-600);
+  --color-text-status: var(--indigo-400);
+  --color-text-inverse: var(--indigo-950);
+  --color-border-default: var(--gray-700);
+  --color-border-light: var(--gray-800);
+  --color-border-primary: var(--indigo-700);
+  --color-bg-white: var(--gray-900);
+  --color-bg-gray: var(--gray-950);
+  --color-bg-primary-subtle: var(--indigo-950);
+  --color-status-success: #6fbf8a;
+  --color-status-success-bg: #14352a;
+  --color-status-warning: #e0a04a;
+  --color-status-warning-bg: #3a2a14;
+  --color-status-error: #e07070;
+  --color-status-error-bg: #3a1818;
+  --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --focus-ring: 2px solid var(--indigo-400);
+}
+
 /* ==========================================================================
    2) reset · base
    ========================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; color-scheme: light dark; }
 body {
   margin: 0;
   font-family: var(--font-family);
@@ -86,6 +126,9 @@ body {
   background: var(--color-bg-white);
   word-break: keep-all;
   overflow-wrap: anywhere;
+  transition:
+    background-color var(--duration-ui) ease,
+    color var(--duration-ui) ease;
 }
 h1, h2, h3, h4, p, ul, ol { margin: 0; padding: 0; }
 h1, h2, h3, h4 { font-size: inherit; font-weight: var(--fw-bold); }
@@ -153,15 +196,28 @@ button { cursor: pointer; }
   overflow-y: auto;
 }
 .chat__switch, .chat__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
+/* Apex UI animated-tabs 스타일 — 슬라이딩 필 인디케이터 */
+.chat__switch {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 2px;
+  border-radius: var(--radius-1depth);
+  background: var(--color-bg-gray);
+  gap: 0;
+}
 .chat__switch-btn {
+  position: relative;
+  z-index: 1;
   height: 32px; padding: 0 var(--space-3);
   border: 0; border-radius: var(--radius-2depth);
   background: transparent;
   color: var(--color-text-secondary);
+  transition: color var(--duration-ui) ease;
 }
-.chat__switch-btn:hover { background: var(--color-bg-gray); }
+.chat__switch-btn:hover { color: var(--color-text-primary); }
 .chat__switch-btn[aria-pressed="true"] {
-  background: var(--color-bg-gray);
+  background: transparent;
   color: var(--color-text-primary);
   font-weight: var(--fw-bold);
 }
@@ -244,18 +300,49 @@ body[data-panel="open"] .chat__intro { display: none; }
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   background: var(--color-bg-white);
-  border-bottom: 1px solid var(--color-border-light);
+  /* border-bottom: 1px solid var(--color-border-light); */
 }
 .reflow__panel-title { font-size: var(--fs-h1); }
 .reflow__panel-actions { display: flex; align-items: center; gap: var(--space-1); }
-.reflow__header { background: var(--color-primary-main); color: var(--color-text-inverse); }
+/* 브랜드 헤더는 테마와 무관하게 인디고 900으로 고정 */
+.reflow__header { background: var(--indigo-900); color: var(--gray-0); }
 .reflow__header-inner {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4);
   max-width: 1200px; margin: 0 auto;
   padding: var(--space-4) var(--space-7);
 }
 .reflow__brand { font-size: var(--fs-h1); font-weight: var(--fw-bold); }
+.reflow__header-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+}
 .reflow__course { font-size: var(--fs-small); }
+
+/* 라이트 / 다크 토글 — 전체 작업대 헤더 (슬라이딩 필) */
+.theme-toggle {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 0;
+  padding: 2px;
+  border-radius: var(--radius-2depth);
+  background: rgba(255, 255, 255, 0.12);
+}
+.theme-toggle__btn {
+  position: relative;
+  z-index: 1;
+  height: 28px; padding: 0 var(--space-3);
+  border: 0; border-radius: calc(var(--radius-2depth) - 1px);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: var(--fs-small); font-weight: var(--fw-bold);
+  line-height: var(--lh-button);
+  transition:
+    color var(--duration-ui) ease,
+    transform var(--duration-press) var(--ease-out);
+}
+.theme-toggle__btn:active { transform: scale(0.97); }
+.theme-toggle__btn[aria-pressed="true"] {
+  background: transparent;
+  color: var(--indigo-900);
+}
 .reflow__inner { max-width: 1200px; margin: 0 auto; padding: var(--space-7); }
 .reflow__intro {
   display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
@@ -299,6 +386,24 @@ body[data-view="panel"] .reflow {
   background: var(--color-bg-white);
   border-left: 1px solid var(--color-border-default);
   box-shadow: var(--shadow-overlay);
+  transform: translateX(100%);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    transform var(--duration-drawer) var(--ease-drawer),
+    visibility 0s linear var(--duration-drawer);
+}
+body[data-view="panel"][data-panel="open"] .reflow {
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    transform var(--duration-drawer) var(--ease-drawer),
+    visibility 0s;
+}
+/* 패널 닫힘 시 [hidden]이 즉시 display:none 하지 않도록 — transform으로만 가린다 */
+body[data-view="panel"] .reflow[hidden] {
+  display: block !important;
 }
 body[data-view="panel"] .reflow__header,
 body[data-view="panel"] .reflow__intro,
@@ -327,6 +432,10 @@ body[data-view="panel"] .filter-bar__count {
 
 /* 패널이 열리면 상단바·본문을 밀어 REFLOW 버튼이 가려지지 않게 한다 */
 @media (min-width: 1200px) {
+  body[data-view="panel"] .chat__top,
+  body[data-view="panel"] .chat__main {
+    transition: padding-right var(--duration-drawer) var(--ease-drawer);
+  }
   body[data-view="panel"][data-panel="open"] .chat__top,
   body[data-view="panel"][data-panel="open"] .chat__main {
     padding-right: calc(420px + var(--space-6));
@@ -344,7 +453,13 @@ body[data-view="panel"] .filter-bar__count {
   border: 1px solid transparent; border-radius: var(--radius-2depth);
   font-size: var(--fs-body); font-weight: var(--fw-bold); line-height: var(--lh-button);
   text-decoration: none; white-space: nowrap;
+  transition:
+    transform var(--duration-press) var(--ease-out),
+    opacity var(--duration-ui) ease,
+    background-color var(--duration-ui) ease,
+    border-color var(--duration-ui) ease;
 }
+.btn:active:not(:disabled) { transform: scale(0.97); }
 .btn--small { height: 32px; }
 .btn--primary { background: var(--color-primary-main); color: var(--color-text-inverse); }
 .btn--primary:hover { opacity: 0.9; }
@@ -369,8 +484,12 @@ body[data-view="panel"] .filter-bar__count {
   border: 0; border-radius: var(--radius-2depth);
   background: transparent;
   color: var(--color-text-secondary);
+  transition:
+    transform var(--duration-press) var(--ease-out),
+    background-color var(--duration-ui) ease;
 }
 .icon-btn:hover { background: var(--color-bg-gray); }
+.icon-btn:active { transform: scale(0.97); }
 .icon { display: block; width: 16px; height: 16px; }
 
 /* 4-2. 요약 상태 배지 · 테마 태그 */
@@ -398,48 +517,122 @@ body[data-view="panel"] .filter-bar__count {
 }
 .filter-bar__search { position: relative; flex: 1 1 240px; min-width: 0; }
 .filter-bar__search-icon {
-  position: absolute; top: var(--space-3); left: var(--space-3);
+  position: absolute; top: 50%; left: 0;
+  transform: translateY(-50%);
   color: var(--color-text-tertiary);
   pointer-events: none;
 }
+/* 검색: 옆 칩·버튼과 구분되도록 박스 대신 밑줄만 */
 .filter-bar__input {
   width: 100%; height: 40px;
-  padding: 0 var(--space-3) 0 calc(var(--space-3) + 16px + var(--space-2));
-  border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
-  background: var(--color-bg-white);
+  padding: 0 0 0 calc(16px + var(--space-2));
+  border: 0;
+  border-bottom: 1px solid var(--color-border-default);
+  border-radius: 0;
+  background: transparent;
+  transition: border-color var(--duration-ui) ease;
 }
 .filter-bar__input::placeholder { color: var(--color-text-tertiary); }
-.filter-bar__input:focus { border-color: var(--color-primary-sub); }
+.filter-bar__input:hover { border-bottom-color: var(--color-text-tertiary); }
+.filter-bar__input:focus,
+.filter-bar__input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-primary-sub);
+  border-bottom-width: 2px;
+  margin-bottom: -1px; /* 두께 증가로 레이아웃이 흔들리지 않게 */
+}
 .filter-bar__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* AI 필터: 기본은 무채색, 선택(aria-pressed)일 때만 primary */
 .filter-chip {
   height: 32px; padding: 0 var(--space-3);
-  border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-2depth);
   background: var(--color-bg-white);
   color: var(--color-text-secondary);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-bold);
+  transition:
+    background-color var(--duration-ui) ease,
+    border-color var(--duration-ui) ease,
+    color var(--duration-ui) ease;
+}
+.filter-chip:hover {
+  border-color: var(--color-border-default);
+  background: var(--color-bg-gray);
+  color: var(--color-text-primary);
 }
 .filter-chip[aria-pressed="true"] {
   background: var(--color-primary-main);
   border-color: var(--color-primary-main);
   color: var(--color-text-inverse);
 }
-.filter-bar__sort { display: flex; }
-.filter-bar__sort-btn {
-  position: relative;
-  height: 32px; padding: 0 var(--space-3);
-  border: 1px solid var(--color-border-default);
-  background: var(--color-bg-white);
-  color: var(--color-text-secondary);
-}
-.filter-bar__sort-btn:first-child { border-radius: var(--radius-2depth) 0 0 var(--radius-2depth); }
-.filter-bar__sort-btn:last-child { margin-left: -1px; border-radius: 0 var(--radius-2depth) var(--radius-2depth) 0; }
-.filter-bar__sort-btn[aria-pressed="true"] {
-  z-index: 1;
+.filter-chip[aria-pressed="true"]:hover {
   background: var(--color-primary-main);
   border-color: var(--color-primary-main);
   color: var(--color-text-inverse);
+  opacity: 0.92;
 }
-.filter-bar__sort-btn:focus-visible { z-index: 2; }
+/* 정렬: 슬라이딩 언더라인 탭 (Apex animated-tabs underline) */
+.filter-bar__sort {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.filter-bar__sort-btn {
+  position: relative;
+  z-index: 1;
+  height: 32px;
+  padding: 0 0 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: var(--fw-regular);
+  transition: color var(--duration-ui) ease;
+}
+.filter-bar__sort-btn:hover { color: var(--color-text-primary); }
+.filter-bar__sort-btn[aria-pressed="true"] {
+  background: transparent;
+  color: var(--color-text-primary);
+  font-weight: var(--fw-bold);
+}
 .filter-bar__count { margin-left: auto; color: var(--color-text-status); }
+
+/* 공통 슬라이딩 인디케이터 */
+.tabs-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(0, 0);
+  transition:
+    transform var(--duration-modal) var(--ease-in-out),
+    width var(--duration-modal) var(--ease-in-out),
+    height var(--duration-modal) var(--ease-in-out),
+    opacity var(--duration-ui) ease;
+}
+.tabs-indicator--pill {
+  border-radius: var(--radius-2depth);
+  background: var(--color-bg-white);
+  box-shadow: 0 1px 2px rgba(36, 28, 75, 0.08);
+}
+.theme-toggle .tabs-indicator--pill {
+  background: var(--gray-0);
+  box-shadow: none;
+}
+.tabs-indicator--underline {
+  border-radius: 1px;
+  background: var(--color-primary-main);
+}
+html[data-theme="dark"] .chat__switch .tabs-indicator--pill {
+  background: var(--gray-800);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
 
 /* 4-4. 요약 카드 */
 .summary-card {
@@ -525,7 +718,12 @@ body[data-view="panel"] .filter-bar__count {
 }
 .modal[open] { display: flex; align-items: center; justify-content: center; }
 .modal::backdrop { background: transparent; }
-.modal__scrim { position: absolute; inset: 0; background: var(--color-primary-main); opacity: 0.4; }
+.modal__scrim {
+  position: absolute; inset: 0;
+  background: var(--color-primary-main);
+  opacity: 0.4;
+  transition: opacity var(--duration-modal) var(--ease-out);
+}
 .modal__box {
   position: relative;
   display: flex; flex-direction: column;
@@ -534,8 +732,45 @@ body[data-view="panel"] .filter-bar__count {
   border-radius: var(--radius-1depth);
   box-shadow: var(--shadow-overlay);
   overflow: hidden;
+  transform-origin: center;
+  transition:
+    opacity var(--duration-modal) var(--ease-out),
+    transform var(--duration-modal) var(--ease-out);
 }
+.modal[open] .modal__box {
+  opacity: 1;
+  transform: scale(1);
+}
+.modal[open] .modal__scrim { opacity: 0.4; }
+@starting-style {
+  .modal[open] .modal__box {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  .modal[open] .modal__scrim { opacity: 0; }
+}
+.modal.is-closing .modal__box {
+  opacity: 0;
+  transform: scale(0.96);
+}
+.modal.is-closing .modal__scrim { opacity: 0; }
 .modal__box--small { width: min(560px, 100%); }
+
+/* 팝업이 열려 있으면 뒤 화면(문서·패널·채팅) 스크롤 고정 */
+html[data-modal-open] {
+  overflow: hidden;
+}
+html[data-modal-open] body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+html[data-modal-open] .reflow,
+html[data-modal-open] .chat__main,
+html[data-modal-open] .chat__nav,
+html[data-modal-open] .chat__thread {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
 .modal__head {
   display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4);
   padding: var(--space-5) var(--space-6);
@@ -581,6 +816,9 @@ body[data-view="panel"] .filter-bar__count {
   border: 1px solid transparent; border-radius: var(--radius-2depth);
   background: transparent;
   text-align: left;
+  transition:
+    background-color var(--duration-ui) ease,
+    border-color var(--duration-ui) ease;
 }
 .evidence-item:hover { background: var(--color-bg-gray); }
 .evidence-item[aria-pressed="true"] {
@@ -613,6 +851,10 @@ body[data-view="panel"] .filter-bar__count {
   border-radius: var(--radius-1depth);
   background: var(--color-bg-white);
   white-space: pre-wrap;
+  transition:
+    background-color var(--duration-ui) ease,
+    border-color var(--duration-ui) ease,
+    box-shadow var(--duration-ui) ease;
 }
 .evidence__message--user .evidence__bubble {
   border-color: transparent;
@@ -620,6 +862,7 @@ body[data-view="panel"] .filter-bar__count {
 .evidence__message--active .evidence__bubble {
   background: var(--color-bg-primary-subtle);
   border-color: var(--color-border-primary);
+  box-shadow: 0 0 0 2px var(--color-border-primary);
 }
 .evidence__meta {
   display: flex; align-items: center; gap: var(--space-2);
@@ -673,7 +916,7 @@ body[data-view="panel"] .filter-bar__count {
 /* 4-10. 알림 */
 .toast {
   position: fixed; left: 50%; bottom: var(--space-6); z-index: 5;
-  transform: translateX(-50%);
+  transform: translate(-50%, 0);
   max-width: calc(100% - var(--space-7));
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-status-success);
@@ -681,6 +924,30 @@ body[data-view="panel"] .filter-bar__count {
   background: var(--color-status-success-bg);
   color: var(--color-status-success);
   font-weight: var(--fw-bold);
+  opacity: 1;
+  transition:
+    opacity var(--duration-toast) ease,
+    transform var(--duration-toast) ease;
+}
+.toast[hidden] {
+  display: block !important;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity var(--duration-toast) ease,
+    transform var(--duration-toast) ease,
+    visibility 0s linear var(--duration-toast);
+}
+.toast:not([hidden]) {
+  visibility: visible;
+}
+@starting-style {
+  .toast:not([hidden]) {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
 }
 
 @media (max-width: 800px) {
@@ -694,6 +961,38 @@ body[data-view="panel"] .filter-bar__count {
 }
 @media (prefers-reduced-motion: reduce) {
   .evidence__list { scroll-behavior: auto; }
+  .btn, .icon-btn {
+    transition: none;
+  }
+  .btn:active:not(:disabled), .icon-btn:active { transform: none; }
+  body[data-view="panel"] .reflow,
+  body[data-view="panel"][data-panel="open"] .reflow,
+  body[data-view="panel"] .chat__top,
+  body[data-view="panel"] .chat__main {
+    transition: none;
+  }
+  body[data-view="panel"] .reflow { transform: none; }
+  .modal__box,
+  .modal__scrim,
+  .toast,
+  .toast[hidden] {
+    transition: opacity var(--duration-ui) ease;
+  }
+  .modal[open] .modal__box,
+  .modal.is-closing .modal__box {
+    transform: none;
+  }
+  .toast,
+  .toast[hidden] {
+    transform: translate(-50%, 0);
+  }
+  .tabs-indicator {
+    transition: opacity var(--duration-ui) ease;
+  }
+  @starting-style {
+    .modal[open] .modal__box { transform: none; }
+    .toast:not([hidden]) { transform: translate(-50%, 0); }
+  }
 }
 
 /* ==========================================================================
@@ -709,7 +1008,8 @@ body[data-view="panel"] .filter-bar__count {
 <!-- 시연용 가상 AI 채팅 화면 -->
 <div class="chat" id="chat">
   <header class="chat__top">
-    <div class="chat__switch" role="group" aria-label="시연할 AI 화면">
+    <div class="chat__switch" role="group" aria-label="시연할 AI 화면" data-tabs="pill">
+      <span class="tabs-indicator tabs-indicator--pill" aria-hidden="true"></span>
       <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="ChatGPT">ChatGPT</button>
       <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="Claude">Claude</button>
       <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="Gemini">Gemini</button>
@@ -762,7 +1062,14 @@ body[data-view="panel"] .filter-bar__count {
   <header class="reflow__header">
     <div class="reflow__header-inner">
       <span class="reflow__brand">REFLOW</span>
-      <span class="reflow__course">시스템과 사용자 경험 · 7조</span>
+      <div class="reflow__header-meta">
+        <span class="reflow__course">시스템과 사용자 경험 · 7조</span>
+        <div class="theme-toggle" role="group" aria-label="화면 테마" data-tabs="pill">
+          <span class="tabs-indicator tabs-indicator--pill" aria-hidden="true"></span>
+          <button type="button" class="theme-toggle__btn" data-action="theme" data-theme="light" aria-pressed="true">라이트</button>
+          <button type="button" class="theme-toggle__btn" data-action="theme" data-theme="dark" aria-pressed="false">다크</button>
+        </div>
+      </div>
     </div>
   </header>
   <div class="reflow__inner">
@@ -788,7 +1095,8 @@ body[data-view="panel"] .filter-bar__count {
         <button type="button" class="filter-chip" data-action="filter-ai" data-ai="Gemini" aria-pressed="false">Gemini</button>
         <button type="button" class="filter-chip" data-action="filter-ai" data-ai="Perplexity" aria-pressed="false">Perplexity</button>
       </div>
-      <div class="filter-bar__sort" role="group" aria-label="정렬">
+      <div class="filter-bar__sort" role="group" aria-label="정렬" data-tabs="underline">
+        <span class="tabs-indicator tabs-indicator--underline" aria-hidden="true"></span>
         <button type="button" class="filter-bar__sort-btn" data-action="sort" data-sort="recent" aria-pressed="true">최신 순</button>
         <button type="button" class="filter-bar__sort-btn" data-action="sort" data-sort="theme" aria-pressed="false">테마 순</button>
       </div>
@@ -1085,7 +1393,8 @@ const state = {
   hostId: "c01",         // 가상 채팅 화면에 떠 있는 대화
   resumed: false,        // 바로 가기로 열었는지
   expanded: new Set(),   // '더 보기'로 펼친 섹션 ("카드id:섹션")
-  drafts: {}             // 가상 채팅에 입력한 메시지
+  drafts: {},            // 가상 채팅에 입력한 메시지
+  chatMounted: false     // 첫 렌더 이후 AI 전환 fade 허용
 };
 
 const $ = (id) => document.getElementById(id);
@@ -1094,7 +1403,61 @@ const editModal = $("edit-modal");
 const guideModal = $("guide-modal");
 const ICON_CLOSE = '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>';
 const DEMO_CARD_ID = "c02"; // 1분 시연 · 조별 발표 자료 마감 맞추기
+const THEME_KEY = "reflow-theme";
 let toastTimer;
+
+function setTheme(theme) {
+  const next = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem(THEME_KEY, next); } catch (_) {}
+  document.querySelectorAll('[data-action="theme"]').forEach((btn) => {
+    btn.setAttribute("aria-pressed", String(btn.dataset.theme === next));
+  });
+  syncAllTabIndicators();
+}
+
+function initTheme() {
+  let saved = "light";
+  try { saved = localStorage.getItem(THEME_KEY) || saved; } catch (_) {}
+  setTheme(saved);
+}
+
+/* Apex animated-tabs: 활성 탭 위치를 따라가는 슬라이딩 인디케이터 */
+function syncTabIndicator(group) {
+  if (!(group instanceof Element)) return;
+  const indicator = group.querySelector(":scope > .tabs-indicator");
+  const active = group.querySelector(':scope > [aria-pressed="true"]');
+  if (!indicator || !active) {
+    if (indicator) indicator.style.opacity = "0";
+    return;
+  }
+  const groupRect = group.getBoundingClientRect();
+  const activeRect = active.getBoundingClientRect();
+  const x = activeRect.left - groupRect.left;
+  const isUnderline = group.dataset.tabs === "underline";
+  const height = isUnderline ? 2 : activeRect.height;
+  const y = isUnderline
+    ? activeRect.bottom - groupRect.top - height
+    : activeRect.top - groupRect.top;
+  indicator.style.width = `${activeRect.width}px`;
+  indicator.style.height = `${height}px`;
+  indicator.style.transform = `translate(${x}px, ${y}px)`;
+  indicator.style.opacity = "1";
+}
+
+function syncAllTabIndicators() {
+  document.querySelectorAll("[data-tabs]").forEach(syncTabIndicator);
+}
+
+function initTabIndicators() {
+  syncAllTabIndicators();
+  document.querySelectorAll("[data-tabs]").forEach((group) => {
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => syncTabIndicator(group));
+    ro.observe(group);
+  });
+  window.addEventListener("resize", syncAllTabIndicators);
+}
 
 /* ==========================================================================
    3) 렌더 함수
@@ -1126,9 +1489,13 @@ function getVisibleCards() {
 }
 
 function renderView() {
+  const panel = $("reflow");
   document.body.dataset.view = state.view;
   document.body.dataset.panel = state.panelOpen ? "open" : "closed";
-  $("reflow").hidden = state.view === "panel" && !state.panelOpen;
+  // 패널 모드에서는 transform으로 열고 닫으므로 hidden을 쓰지 않는다
+  panel.hidden = false;
+  panel.toggleAttribute("inert", state.view === "panel" && !state.panelOpen);
+  panel.setAttribute("aria-hidden", String(state.view === "panel" && !state.panelOpen));
   $("panel-toggle").setAttribute("aria-expanded", String(state.panelOpen));
   $("panel-toggle").textContent = state.panelOpen ? "REFLOW 닫기" : "REFLOW 열기";
 }
@@ -1150,6 +1517,14 @@ function renderChat() {
     const isUser = message.role === "user";
     return `<li class="chat__turn${isUser ? " chat__turn--user" : ""}"><span class="chat__role">${isUser ? "나" : escapeHtml(card.ai)}</span><p class="chat__text">${escapeHtml(message.text)}</p></li>`;
   }).join("");
+  syncTabIndicator(document.querySelector(".chat__switch"));
+  if (state.chatMounted && !prefersReducedMotion()) {
+    $("chat-thread").animate(
+      [{ opacity: 0.55 }, { opacity: 1 }],
+      { duration: 200, easing: "cubic-bezier(0.23, 1, 0.32, 1)" }
+    );
+  }
+  state.chatMounted = true;
 }
 
 function renderFilters() {
@@ -1159,6 +1534,7 @@ function renderFilters() {
   document.querySelectorAll('[data-action="sort"]').forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.sort === state.sort));
   });
+  syncTabIndicator(document.querySelector(".filter-bar__sort"));
 }
 
 function renderMeta(card) {
@@ -1335,13 +1711,80 @@ function renderEdit() {
 /* ==========================================================================
    4) 이벤트 연결
    ========================================================================== */
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+let lockedScrollY = 0;
+
+function isAnyModalOpen() {
+  return [detailModal, editModal, guideModal].some(
+    (dialog) => dialog.open || dialog.classList.contains("is-closing")
+  );
+}
+
+function syncModalScrollLock() {
+  const lock = isAnyModalOpen();
+  if (lock === document.documentElement.hasAttribute("data-modal-open")) return;
+  if (lock) {
+    lockedScrollY = window.scrollY;
+    document.documentElement.setAttribute("data-modal-open", "");
+    document.body.style.top = `-${lockedScrollY}px`;
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+  } else {
+    document.documentElement.removeAttribute("data-modal-open");
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    window.scrollTo(0, lockedScrollY);
+  }
+}
+
+function openModal(dialog) {
+  if (!dialog.open) dialog.showModal();
+  syncModalScrollLock();
+}
+
+function closeModal(dialog) {
+  if (!dialog?.open || dialog.classList.contains("is-closing")) return;
+  if (prefersReducedMotion()) {
+    dialog.close();
+    syncModalScrollLock();
+    return;
+  }
+  dialog.classList.add("is-closing");
+  syncModalScrollLock();
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    dialog.classList.remove("is-closing");
+    if (dialog.open) dialog.close();
+    syncModalScrollLock();
+  };
+  const box = dialog.querySelector(".modal__box");
+  if (!box) { finish(); return; }
+  const onEnd = (event) => {
+    if (event.target !== box || event.propertyName !== "opacity") return;
+    box.removeEventListener("transitionend", onEnd);
+    finish();
+  };
+  box.addEventListener("transitionend", onEnd);
+  setTimeout(finish, 320);
+}
+
 function showToast(text) {
   const toast = $("toast");
   // 열린 모달은 화면 최상단 레이어에 뜨므로, 알림도 그 안으로 옮겨야 가려지지 않는다
   const host = editModal.open ? editModal : detailModal.open ? detailModal : document.body;
   host.appendChild(toast);
   toast.textContent = text;
-  toast.hidden = false;
+  toast.hidden = true;
+  // 한 프레임 숨긴 뒤 다시 열어 @starting-style 진입 애니메이션을 탄다
+  requestAnimationFrame(() => {
+    toast.hidden = false;
+  });
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { toast.hidden = true; }, 3000);
 }
@@ -1375,7 +1818,7 @@ function openDetail(id, withEvidence) {
   state.detailId = id;
   renderCards();
   renderDetail();
-  if (!detailModal.open) detailModal.showModal();
+  openModal(detailModal);
   if (!withEvidence) return;
   // '근거 보기'로 열면 근거가 있는 첫 항목을 바로 강조한다
   for (const section of SECTIONS) {
@@ -1409,7 +1852,7 @@ function openEdit(id) {
   state.editId = id;
   if (!detailModal.open) renderCards();
   renderEdit();
-  if (!editModal.open) editModal.showModal();
+  openModal(editModal);
 }
 
 function isValidUrl(value) {
@@ -1440,7 +1883,7 @@ function saveSummary() {
   });
   card.sourceUrl = link;
   card.status = "edited";
-  editModal.close();
+  closeModal(editModal);
   renderCards();
   if (detailModal.open) renderDetail();
   showToast("저장했어요");
@@ -1450,6 +1893,9 @@ function goToSource(id) {
   // 원본 링크가 없는 카드는 가상 채팅 화면의 해당 대화로 이동한다
   if (editModal.open) editModal.close();
   if (detailModal.open) detailModal.close();
+  editModal.classList.remove("is-closing");
+  detailModal.classList.remove("is-closing");
+  syncModalScrollLock();
   state.selectedId = id;
   state.hostId = id;
   state.resumed = true;
@@ -1481,12 +1927,17 @@ document.addEventListener("click", (event) => {
     case "close-panel": setPanel(false); break;
     case "view-workspace": setView("workspace"); break;
     case "view-panel": setView("panel"); break;
+    case "theme":
+      setTheme(target.dataset.theme);
+      break;
     case "open-guide":
-      if (!guideModal.open) guideModal.showModal();
+      openModal(guideModal);
       break;
     case "guided-start":
       // 시연 흐름: 패널을 연 뒤 마감 카드의 근거 보기로 바로 이동
       guideModal.close();
+      guideModal.classList.remove("is-closing");
+      syncModalScrollLock();
       state.view = "panel";
       state.panelOpen = true;
       renderView();
@@ -1531,7 +1982,7 @@ document.addEventListener("click", (event) => {
       break;
     }
     case "show-evidence": openEvidence(target.dataset.kind, Number(target.dataset.index)); break;
-    case "close-modal": target.closest("dialog").close(); break;
+    case "close-modal": closeModal(target.closest("dialog")); break;
     case "add-line": {
       const group = target.closest(".edit-form__group");
       const lines = group.querySelector(".edit-form__lines");
@@ -1565,14 +2016,32 @@ $("edit-form").addEventListener("input", (event) => {
 });
 
 detailModal.addEventListener("close", () => {
+  detailModal.classList.remove("is-closing");
+  syncModalScrollLock();
   state.detailId = null;
   focusCard(state.selectedId);
 });
 
 editModal.addEventListener("close", () => {
+  editModal.classList.remove("is-closing");
+  syncModalScrollLock();
   state.editId = null;
   if (detailModal.open) $("detail-edit")?.focus();
   else focusCard(state.selectedId);
+});
+
+guideModal.addEventListener("close", () => {
+  guideModal.classList.remove("is-closing");
+  syncModalScrollLock();
+});
+
+/* Esc / backdrop로 닫힐 때도 퇴장 애니메이션 */
+[detailModal, editModal, guideModal].forEach((dialog) => {
+  dialog.addEventListener("cancel", (event) => {
+    if (dialog.classList.contains("is-closing")) return;
+    event.preventDefault();
+    closeModal(dialog);
+  });
 });
 
 $("chat-form").addEventListener("submit", (event) => {
@@ -1598,10 +2067,12 @@ document.addEventListener("keydown", (event) => {
   if (state.view === "panel" && state.panelOpen) setPanel(false);
 });
 
+initTheme();
 renderView();
 renderChat();
 renderFilters();
 renderCards();
+initTabIndicators();
 </script>
 </body>
 </html>
