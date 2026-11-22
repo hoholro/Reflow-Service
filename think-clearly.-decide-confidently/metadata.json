@@ -1,0 +1,6 @@
+{
+  "name": "Think clearly. Decide confidently",
+  "description": "An AI workspace that structures your reasoning, not just your answers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
