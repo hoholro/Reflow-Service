@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>REFLOW — 대화 작업대</title>
-  <meta name="description" content="여러 AI 대화를 테마별 카드로 모아, 확정 · 미정 · 다음 행동을 한눈에 보는 대화 작업대" />
+  <meta name="description" content="흩어진 AI 대화를 카드로 모아, 확인하고, 하던 대화로 바로 이어 가는 REFLOW" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <script>
     (function () {
       var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!reduced) {
         var root = document.documentElement;
-        root.classList.add("entrance", "entrance-s2");
+        root.classList.add("entrance", "entrance-s2", "motion");
         window.setTimeout(function () {
           root.classList.remove("entrance");
         }, 3500);
@@ -20,17 +20,29 @@
   </script>
   <style>
     :root {
-      --indigo-400: #948dd9; --indigo-500: #7166bc; --indigo-600: #554a99;
-      --indigo-800: #2f265d; --indigo-900: #241c4b; --indigo-950: #110b2a;
+      --indigo-100: #ebebfd; --indigo-200: #d8d7f8; --indigo-400: #948dd9;
+      --indigo-500: #7166bc; --indigo-600: #554a99; --indigo-900: #241c4b;
       --ochre-500: #e4a339;
-      --gray-0: #fff; --gray-100: #f4f4f5; --gray-500: #71717a; --gray-600: #52525b; --gray-900: #18181b;
+      --gray-0: #ffffff; --gray-100: #f2f2f6; --gray-200: #e6e6eb; --gray-300: #d2d2d8;
+      --gray-500: #72727b; --gray-600: #5a5a64; --gray-900: #1a1924;
       --color-primary-main: var(--indigo-900);
       --color-primary-sub: var(--indigo-600);
       --color-primary-light: var(--indigo-400);
       --color-primary-point: var(--ochre-500);
+      --color-text-primary: var(--gray-900);
+      --color-text-secondary: var(--gray-600);
+      --color-text-tertiary: var(--gray-500);
+      --color-text-inverse: var(--gray-0);
       --color-text-status: var(--indigo-500);
+      --color-border-default: var(--gray-300);
+      --color-border-light: var(--gray-200);
+      --color-border-primary: var(--indigo-200);
+      --color-bg-white: var(--gray-0);
+      --color-bg-gray: var(--gray-100);
+      --color-bg-primary-subtle: var(--indigo-100);
       --radius-1depth: 8px;
       --radius-2depth: 6px;
+      --shadow-overlay: 0 8px 24px rgba(36, 28, 75, 0.12);
       --focus-ring: 2px solid var(--color-primary-sub);
       --font: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
     }
@@ -39,21 +51,22 @@
     html {
       font-size: 16px;
       scroll-behavior: smooth;
-      background: var(--indigo-950);
+      background: var(--color-bg-gray);
+      color-scheme: light;
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
     }
     body {
       margin: 0;
-      background: var(--indigo-950);
-      color: #fff;
+      background: var(--color-bg-gray);
+      color: var(--color-text-primary);
       font-family: var(--font);
       -webkit-font-smoothing: antialiased;
       word-break: keep-all;
     }
     body.menu-open { overflow: hidden; }
-    ::selection { background: var(--color-primary-main); color: #fff; }
+    ::selection { background: var(--color-primary-main); color: var(--color-text-inverse); }
     a:focus-visible, button:focus-visible {
       outline: var(--focus-ring);
       outline-offset: 3px;
@@ -70,43 +83,36 @@
     html.entrance-s2 .section-two .hl-line { opacity: 0; }
     html.entrance-s2 .section-two .hl-mask { overflow: hidden; }
 
+    html.motion .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1);
+    }
+    html.motion .reveal.is-in { opacity: 1; transform: none; }
+    html.motion .flow-step { opacity: .38; transition: opacity .45s ease; }
+    html.motion .flow-step.is-on { opacity: 1; }
+
     /* ================================================================
        SECTION 1 — HERO (think-clearly architecture)
     ================================================================ */
     .section-one {
-      --bg: var(--indigo-950);
-      --box: #1a1438;
-      --hairline: rgba(255,255,255,0.08);
-      --heading: #fafafa;
-      --subtitle: rgba(255,255,255,0.68);
-      --nav: rgba(255,255,255,0.72);
-      --chip-fill: rgba(255,255,255,0.04);
-      --chip-border: rgba(255,255,255,0.28);
-      --chip-edge: linear-gradient(135deg,
-        rgba(255,255,255,0.95) 0%,
-        rgba(255,255,255,0.55) 28%,
-        rgba(255,255,255,0.18) 52%,
-        rgba(255,255,255,0.06) 100%);
-      --strip: rgba(255,255,255,0.42);
-      --grad-solid: linear-gradient(90deg,
-        var(--color-primary-light) 0%,
-        var(--color-text-status) 38%,
-        var(--color-primary-point) 100%);
+      --bg: var(--color-bg-white);
+      --box: var(--color-bg-white);
+      --hairline: var(--color-border-default);
+      --heading: var(--color-text-primary);
+      --subtitle: var(--color-text-secondary);
+      --nav: var(--color-text-secondary);
+      --chip-fill: var(--color-bg-white);
+      --chip-border: var(--color-border-default);
+      --chip-edge: var(--color-border-default);
+      --strip: var(--color-text-secondary);
+      --grad-solid: var(--color-primary-sub);
 
       min-height: 100dvh;
       background: var(--bg);
       position: relative;
     }
-    .section-one::before {
-      content: "";
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(60rem 40rem at 70% 12%, rgba(85,74,153,.35), transparent 55%),
-        radial-gradient(36rem 28rem at 12% 88%, rgba(228,163,57,.1), transparent 50%),
-        repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 72px),
-        repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 72px);
-      pointer-events: none;
-    }
+    .section-one::before { content: none; }
 
     .page {
       position: relative;
@@ -126,7 +132,7 @@
     }
     .logo-link {
       justify-self: start;
-      color: #fff;
+      color: var(--color-text-primary);
       font-weight: 700;
       font-size: clamp(1.05rem,1.4vw,1.25rem);
       letter-spacing: -.03em;
@@ -144,11 +150,11 @@
       text-decoration: none;
       transition: color .18s ease;
     }
-    .nav-links a:hover, .nav-links a:focus-visible { color: #fff; }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--color-text-primary); }
     .nav-actions { justify-self: end; display: flex; align-items: center; }
     .btn-start {
       display: inline-flex; align-items: center; justify-content: center;
-      background: #fff; color: var(--indigo-950);
+      background: var(--color-primary-main); color: var(--color-text-inverse);
       font-family: inherit; font-weight: 700;
       font-size: clamp(.9rem,1.1vw,1.05rem);
       border: 0; border-radius: var(--radius-2depth);
@@ -156,7 +162,7 @@
       text-decoration: none; white-space: nowrap;
       transition: background-color .18s ease, transform .12s ease;
     }
-    .btn-start:hover { background: #ededed; }
+    .btn-start:hover { opacity: 0.9; }
     .btn-start:active { transform: scale(.98); }
 
     .burger {
@@ -165,7 +171,7 @@
       flex-direction: column; align-items: center; justify-content: center; gap: 6px;
     }
     .burger span {
-      display: block; width: 22px; height: 1.5px; background: #f2f2f2; border-radius: 1px;
+      display: block; width: 22px; height: 1.5px; background: var(--color-text-primary); border-radius: 1px;
       transform-origin: center;
       transition: transform .26s cubic-bezier(.22,1,.36,1), opacity .18s ease;
     }
@@ -194,13 +200,20 @@
       letter-spacing: -.03em;
       font-size: clamp(2.4rem,6.2vw,5.4rem);
     }
+    .hero-kicker {
+      margin: 0 0 clamp(.7rem,1.4vw,1rem);
+      color: var(--color-primary-sub);
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
     .hero-sub {
       margin: clamp(1rem,2.4vw,2.2rem) 0 0;
       color: var(--subtitle);
       font-weight: 400;
       font-size: clamp(.95rem,1.35vw,1.25rem);
       line-height: 1.4;
-      max-width: 34rem;
+      max-width: 36rem;
     }
 
     /* Card preview = composer shell */
@@ -213,12 +226,10 @@
     .composer {
       position: relative;
       width: clamp(300px,55vw,640px);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 42%),
-        var(--box);
+      background: var(--box);
       border: 1px solid var(--hairline);
       border-radius: var(--radius-1depth);
-      box-shadow: 0 2px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+      box-shadow: var(--shadow-overlay);
       padding: clamp(16px,1.8vw,28px);
       text-align: left;
     }
@@ -239,7 +250,7 @@
     }
     .card-meta strong { font-size: clamp(.9rem,1.1vw,1.05rem); }
     .card-meta span {
-      color: rgba(255,255,255,.58);
+      color: var(--color-text-secondary);
       font-size: .75rem; font-weight: 700;
     }
     .card-row {
@@ -248,23 +259,23 @@
       gap: .45rem .85rem;
       align-items: baseline;
       padding: .55rem 0;
-      border-top: 1px solid rgba(255,255,255,.1);
+      border-top: 1px solid var(--color-border-light);
     }
     .card-row:first-of-type { border-top: 0; padding-top: 0; }
     .card-k { font-size: .75rem; font-weight: 700; }
-    .card-k.is-c { color: rgba(255,255,255,.92); }
-    .card-k.is-o { color: var(--color-primary-point); }
-    .card-k.is-n { color: var(--color-primary-light); }
+    .card-k.is-c,
+    .card-k.is-o,
+    .card-k.is-n { color: var(--color-text-primary); }
     .card-v {
       margin: 0;
       font-size: clamp(.85rem,1.05vw,.95rem);
-      color: rgba(255,255,255,.9);
+      color: var(--color-text-primary);
       line-height: 1.4;
     }
     .card-actions {
       display: flex; flex-wrap: wrap; gap: .5rem;
       margin-top: 1rem; padding-top: .85rem;
-      border-top: 1px solid rgba(255,255,255,.1);
+      border-top: 1px solid var(--color-border-light);
     }
     .chip-btn {
       position: relative;
@@ -273,12 +284,12 @@
       border-radius: 999px;
       border: 1px solid var(--chip-border);
       background: var(--chip-fill);
-      color: rgba(255,255,255,.88);
+      color: var(--color-text-primary);
       font-family: inherit; font-size: .8125rem; font-weight: 700;
       text-decoration: none; cursor: pointer;
       transition: background-color .18s ease;
     }
-    .chip-btn:hover { background: rgba(255,255,255,.08); }
+    .chip-btn:hover { background: var(--color-bg-gray); }
     @supports ((-webkit-mask-composite: xor) or (mask-composite: exclude)) {
       .chip-btn { border-color: transparent; }
       .chip-btn::before {
@@ -313,12 +324,7 @@
       position: fixed; inset: 0; z-index: 20;
       display: flex; flex-direction: column; justify-content: space-between;
       padding: calc(84px + env(safe-area-inset-top)) clamp(22px,6vw,40px) calc(28px + env(safe-area-inset-bottom));
-      background:
-        radial-gradient(85% 60% at 15% 18%, rgba(148,141,217,.18) 0%, transparent 60%),
-        radial-gradient(85% 65% at 88% 82%, rgba(228,163,57,.12) 0%, transparent 62%),
-        linear-gradient(180deg, rgba(17,11,42,.94) 0%, rgba(17,11,42,.98) 100%);
-      backdrop-filter: blur(22px) saturate(120%);
-      -webkit-backdrop-filter: blur(22px) saturate(120%);
+      background: var(--color-bg-white);
       opacity: 0; pointer-events: none;
       transition: opacity .34s ease;
     }
@@ -337,9 +343,10 @@
     .nav-overlay.open .overlay-item:nth-child(2) { transition-delay: .14s; }
     .nav-overlay.open .overlay-item:nth-child(3) { transition-delay: .20s; }
     .nav-overlay.open .overlay-item:nth-child(4) { transition-delay: .26s; }
+    .nav-overlay.open .overlay-item:nth-child(5) { transition-delay: .32s; }
     .overlay-link {
       position: relative; display: inline-block;
-      color: #f5f5f5; font-family: var(--font);
+      color: var(--color-text-primary); font-family: var(--font);
       font-size: clamp(2rem,9vw,3.2rem); font-weight: 700;
       letter-spacing: -.02em; line-height: 1.15; text-decoration: none;
     }
@@ -359,7 +366,7 @@
     }
     .overlay-cta {
       display: block; width: 100%; text-align: center;
-      background: #fff; color: var(--indigo-950);
+      background: var(--color-primary-main); color: var(--color-text-inverse);
       font-family: var(--font); font-weight: 700; font-size: 1.0625rem;
       border-radius: var(--radius-2depth);
       padding: 15px 24px; text-decoration: none;
@@ -369,15 +376,13 @@
        SECTION 2 — FEATURES PANEL
     ================================================================ */
     .section-two {
-      --heading: #fff;
-      --subhead: rgba(255,255,255,.62);
-      --panel-bg: #110b2a;
-      --bubble-bg: #1f1840;
-      --msg-text: #efefef;
-      --reason-text: #110b2a;
+      --heading: var(--color-text-primary);
+      --subhead: var(--color-text-secondary);
+      --panel-bg: var(--color-bg-white);
+      --reason-text: var(--color-text-primary);
 
       min-height: 100dvh;
-      background: var(--indigo-950);
+      background: var(--color-bg-white);
       padding: clamp(20px,3.2vh,42px) clamp(16px,6vw,91px) clamp(16px,2.4vh,32px);
       display: flex; flex-direction: column; align-items: center;
     }
@@ -388,7 +393,7 @@
       color: var(--heading);
       letter-spacing: -.02em;
       font-size: clamp(1.55rem,3.8vw,2.85rem);
-      line-height: 1.15;
+      line-height: 1.2;
     }
     .s2-sub {
       margin: clamp(12px,1.8vh,22px) 0 0;
@@ -402,17 +407,10 @@
       margin-top: clamp(22px,3.6vh,44px);
       border-radius: var(--radius-1depth);
       padding: clamp(16px,2.6vw,36px) clamp(14px,3vw,42px) clamp(20px,3vw,42px);
-      background:
-        radial-gradient(120% 150% at 8% 50%, var(--color-primary-light) 0%, rgba(148,141,217,0) 55%),
-        radial-gradient(120% 150% at 96% 48%, var(--color-primary-point) 0%, rgba(228,163,57,0) 58%),
-        linear-gradient(96deg, #554a99 0%, #403679 40%, #7166bc 70%, #e4a339 100%);
+      background: var(--color-bg-primary-subtle);
+      border: 1px solid var(--color-border-primary);
     }
-    .panel::after {
-      content: "";
-      position: absolute; inset: 0; border-radius: inherit;
-      background: radial-gradient(135% 120% at 50% 50%, transparent 58%, rgba(0,0,0,.28) 100%);
-      pointer-events: none; z-index: 0;
-    }
+    .panel::after { content: none; }
     .panel > * { position: relative; z-index: 1; }
     .reasoning-row {
       display: flex; align-items: center; gap: 9px;
@@ -420,8 +418,7 @@
     }
     .reasoning-dot {
       width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-      background: radial-gradient(circle at 38% 35%, #c4bff0 0%, var(--color-primary-light) 55%, var(--indigo-600) 100%);
-      box-shadow: 0 0 6px rgba(148,141,217,.65);
+      background: var(--color-primary-sub);
     }
     .reasoning-label {
       color: var(--reason-text);
@@ -433,7 +430,7 @@
       background: var(--panel-bg);
       border-radius: var(--radius-1depth);
       padding: clamp(16px,2.4vw,28px);
-      box-shadow: 0 18px 50px rgba(0,0,0,.38);
+      border: 1px solid var(--color-border-default);
     }
     .wb-head {
       display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem;
@@ -448,11 +445,11 @@
       display: inline-flex; align-items: center;
       height: 22px; padding: 0 8px;
       border-radius: 4px;
-      background: rgba(148,141,217,.18);
-      color: var(--color-primary-light);
+      background: var(--color-bg-primary-subtle);
+      color: var(--color-primary-sub);
       font-size: .72rem; font-weight: 700;
     }
-    .wb-sec { padding: .75rem 0; border-top: 1px solid rgba(255,255,255,.1); }
+    .wb-sec { padding: .75rem 0; border-top: 1px solid var(--color-border-light); }
     .wb-sec:first-of-type { border-top: 0; padding-top: 0; }
     .wb-label {
       display: flex; align-items: center; gap: .45rem;
@@ -462,28 +459,139 @@
     .dot {
       width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
     }
-    .dot--c { background: #fff; }
+    .dot--c { background: var(--color-primary-main); }
     .dot--o { background: var(--color-primary-point); }
-    .dot--n { background: var(--color-primary-light); }
+    .dot--n { background: var(--color-primary-sub); }
     .wb-sec ul { margin: 0; padding: 0; list-style: none; }
     .wb-sec li {
-      color: rgba(255,255,255,.88);
+      color: var(--color-text-primary);
       font-size: .92rem; line-height: 1.45;
       padding: .15rem 0;
     }
     .wb-foot {
       display: flex; justify-content: space-between; align-items: center; gap: 1rem;
       margin-top: 1rem; padding-top: .9rem;
-      border-top: 1px solid rgba(255,255,255,.1);
-      font-size: .8rem; color: rgba(255,255,255,.55); font-weight: 700;
+      border-top: 1px solid var(--color-border-light);
+      font-size: .8rem; color: var(--color-text-secondary); font-weight: 700;
     }
     .wb-go { color: var(--color-primary-light); }
+
+    .flow {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .75rem;
+      margin: clamp(22px,3.2vh,36px) 0 0;
+      padding: 0;
+    }
+    .flow-step {
+      margin: 0;
+      padding: .9rem .85rem;
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-2depth);
+      background: var(--color-bg-gray);
+    }
+    .flow-step strong, .flow-step span { display: block; }
+    .flow-step strong { font-size: .92rem; }
+    .flow-step span {
+      margin-top: .3rem;
+      color: var(--color-text-secondary);
+      font-size: .82rem;
+      line-height: 1.4;
+    }
+    .fn-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: .75rem;
+      margin: clamp(16px,2.4vh,24px) 0 0;
+      padding: 0;
+    }
+    .fn-list li {
+      margin: 0;
+      padding: .85rem .8rem 0 0;
+      border-top: 1px solid var(--color-border-light);
+    }
+    .fn-list strong, .fn-list span { display: block; }
+    .fn-list strong { font-size: .9rem; }
+    .fn-list span {
+      margin-top: .35rem;
+      color: var(--color-text-secondary);
+      font-size: .85rem;
+      line-height: 1.45;
+    }
+
+    .section-block {
+      background: var(--color-bg-gray);
+      padding: clamp(64px,10vh,120px) clamp(16px,6vw,91px);
+    }
+    .block-wrap { max-width: 1100px; margin: 0 auto; }
+    .block-wrap h2, .section-try h2 {
+      margin: .6rem 0 0;
+      font-size: clamp(1.55rem,3.4vw,2.5rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.25;
+    }
+    .eyebrow {
+      margin: 0;
+      color: var(--color-primary-sub);
+      font-size: .8rem;
+      font-weight: 700;
+    }
+    .block-lead, .block-note {
+      margin: 1rem 0 0;
+      color: var(--color-text-secondary);
+      font-size: clamp(.95rem,1.2vw,1.05rem);
+      line-height: 1.55;
+      max-width: 42rem;
+    }
+    .block-note { margin-top: clamp(1.5rem,3vh,2rem); }
+    .scene-quote {
+      margin: .7rem 0 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .section-try {
+      background: var(--color-bg-white);
+      padding: clamp(64px,10vh,120px) clamp(16px,6vw,91px);
+    }
+    .try-wrap { max-width: 760px; margin: 0 auto; }
+    .try-steps {
+      list-style: none;
+      margin: 1.75rem 0 0;
+      padding: 0;
+      counter-reset: step;
+    }
+    .try-steps li {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 2rem minmax(0, 1fr);
+      gap: .75rem;
+      padding: .9rem 0;
+      border-top: 1px solid var(--color-border-light);
+      color: var(--color-text-primary);
+      line-height: 1.5;
+    }
+    .try-steps li:last-child { border-bottom: 1px solid var(--color-border-light); }
+    .try-steps li::before {
+      content: counter(step);
+      color: var(--color-primary-sub);
+      font-weight: 700;
+    }
+    .try-note {
+      margin: 1.25rem 0 0;
+      color: var(--color-text-secondary);
+      font-size: .9rem;
+      line-height: 1.55;
+    }
 
     /* ================================================================
        SECTION 3 — WHY
     ================================================================ */
     .section-why {
-      background: #0a0718;
+      background: var(--color-bg-gray);
       padding: clamp(64px,10vh,120px) clamp(16px,6vw,91px);
     }
     .why-wrap { max-width: 1100px; margin: 0 auto; }
@@ -495,7 +603,7 @@
     }
     .why-lead {
       margin: 1rem 0 0;
-      color: rgba(255,255,255,.65);
+      color: var(--color-text-secondary);
       font-size: clamp(.95rem,1.2vw,1.1rem);
       max-width: 40rem; line-height: 1.5;
     }
@@ -511,7 +619,7 @@
     }
     .why-item p {
       margin: .55rem 0 0;
-      color: rgba(255,255,255,.62);
+      color: var(--color-text-secondary);
       font-size: .95rem; line-height: 1.5;
     }
 
@@ -519,7 +627,7 @@
        FAQ + CTA
     ================================================================ */
     .section-faq {
-      background: var(--indigo-950);
+      background: var(--color-bg-gray);
       padding: clamp(64px,10vh,120px) clamp(16px,6vw,91px);
     }
     .faq-wrap { max-width: 760px; margin: 0 auto; }
@@ -529,21 +637,21 @@
       font-weight: 700; letter-spacing: -.02em;
     }
     .faq-list { margin-top: 2rem; }
-    .faq-item { border-top: 1px solid rgba(255,255,255,.12); }
-    .faq-item:last-child { border-bottom: 1px solid rgba(255,255,255,.12); }
+    .faq-item { border-top: 1px solid var(--color-border-light); }
+    .faq-item:last-child { border-bottom: 1px solid var(--color-border-light); }
     .faq-q {
       width: 100%;
       display: flex; justify-content: space-between; align-items: center; gap: 1rem;
       padding: 1.15rem 0;
       background: none; border: 0;
-      color: #fff; font-family: inherit; font-size: 1.05rem; font-weight: 700;
+      color: var(--color-text-primary); font-family: inherit; font-size: 1.05rem; font-weight: 700;
       text-align: left; cursor: pointer;
     }
     .faq-icon {
       width: 18px; height: 18px; position: relative; flex-shrink: 0;
     }
     .faq-icon::before, .faq-icon::after {
-      content: ""; position: absolute; background: rgba(255,255,255,.7);
+      content: ""; position: absolute; background: var(--color-text-secondary);
       transition: transform .2s ease;
     }
     .faq-icon::before { inset: 8px 0 8px 0; }
@@ -558,12 +666,12 @@
     .faq-a > div { overflow: hidden; }
     .faq-a p {
       margin: 0 0 1.15rem;
-      color: rgba(255,255,255,.65);
+      color: var(--color-text-secondary);
       font-size: .95rem; line-height: 1.55;
     }
 
     .section-cta {
-      background: #0a0718;
+      background: var(--color-bg-white);
       padding: clamp(72px,12vh,140px) clamp(16px,6vw,91px);
       text-align: center;
     }
@@ -574,7 +682,7 @@
     }
     .section-cta p {
       margin: 1rem auto 0;
-      color: rgba(255,255,255,.65);
+      color: var(--color-text-secondary);
       max-width: 32rem; line-height: 1.5;
     }
     .cta-actions {
@@ -583,14 +691,17 @@
     }
     .btn-primary {
       display: inline-flex; align-items: center; justify-content: center;
-      background: #fff; color: var(--indigo-950);
+      background: var(--color-primary-main); color: var(--color-text-inverse);
       font-family: inherit; font-weight: 700; font-size: 1rem;
       border-radius: var(--radius-2depth);
       padding: .85em 1.4em; text-decoration: none;
     }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-ghost:hover { background: var(--color-bg-gray); }
     .btn-ghost {
       display: inline-flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255,255,255,.28); color: #fff;
+      border: 1px solid var(--color-border-default); color: var(--color-text-primary);
+      background: var(--color-bg-white);
       font-family: inherit; font-weight: 700; font-size: 1rem;
       border-radius: var(--radius-2depth);
       padding: .85em 1.4em; text-decoration: none;
@@ -598,11 +709,11 @@
 
     .site-footer {
       padding: 1.5rem clamp(16px,6vw,91px) 2rem;
-      border-top: 1px solid rgba(255,255,255,.08);
+      border-top: 1px solid var(--color-border-light);
       display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem;
-      color: rgba(255,255,255,.45); font-size: .85rem;
+      color: var(--color-text-secondary); font-size: .85rem;
     }
-    .site-footer strong { color: rgba(255,255,255,.8); }
+    .site-footer strong { color: var(--color-text-primary); }
 
     @media (min-width: 1025px) {
       h1.hero-title { font-size: clamp(3.1rem,4.8vw,4.8rem); }
@@ -613,7 +724,7 @@
       .nav-center, .btn-start { display: none; }
       .burger { display: flex; }
       .composer { width: clamp(320px,78vw,640px); }
-      .why-grid { grid-template-columns: 1fr; }
+      .why-grid, .flow, .fn-list { grid-template-columns: 1fr; }
     }
     @media (max-width: 680px) {
       h1.hero-title { font-size: clamp(2.2rem,9vw,3rem); }
@@ -637,7 +748,9 @@
       .section-one [data-enter],
       .section-two [data-enter],
       .hl-line,
-      .composer-glow {
+      .composer-glow,
+      .reveal,
+      .flow-step {
         opacity: 1 !important;
         transform: none !important;
         clip-path: none !important;
@@ -653,8 +766,10 @@
         <a class="logo-link" href="#home" data-enter>REFLOW</a>
         <nav class="nav-center" aria-label="주요 메뉴">
           <ul class="nav-links">
-            <li><a href="#features" data-enter>기능</a></li>
-            <li><a href="#why" data-enter>근거</a></li>
+            <li><a href="#pain" data-enter>불편</a></li>
+            <li><a href="#features" data-enter>해결</a></li>
+            <li><a href="#scenes" data-enter>장면</a></li>
+            <li><a href="#try" data-enter>써보기</a></li>
             <li><a href="#faq" data-enter>FAQ</a></li>
           </ul>
         </nav>
@@ -667,33 +782,34 @@
       </header>
 
       <div class="hero">
+        <p class="hero-kicker" data-enter>RE + FLOW · 끊어진 작업의 흐름을 다시 이어 줍니다</p>
         <h1 class="hero-title">
-          <span class="hl-mask"><span class="hl-line">REFLOW</span></span>
-          <span class="hl-mask"><span class="hl-line">흩어진 대화를 카드로.</span></span>
+          <span class="hl-mask"><span class="hl-line">흩어진 AI 대화를</span></span>
+          <span class="hl-mask"><span class="hl-line">한곳에 모아, 바로 이어 가세요.</span></span>
         </h1>
         <p class="hero-sub" data-enter>
-          여러 AI 대화를 테마별 카드로 모아,<br class="sub-br" />
-          확정 · 미정 · 다음 행동을 한눈에 보는 대화 작업대
+          여러 AI와 나눈 대화를 카드 한 장씩으로 정리해 드립니다.<br class="sub-br" />
+          카드를 누르면 원래 대화로 바로 돌아갈 수 있습니다.
         </p>
 
         <div class="composer-shell" data-enter>
           <div class="composer" aria-label="카드 미리보기">
             <div class="composer-glow" aria-hidden="true"></div>
             <div class="card-meta" data-enter>
-              <strong>조별 발표 자료 마감</strong>
-              <span>요약됨</span>
+              <strong>2박 3일 여행 일정 짜기</strong>
+              <span>ChatGPT · 여행</span>
             </div>
             <div class="card-row" data-enter>
               <span class="card-k is-c">확정</span>
-              <p class="card-v">마감 목요일 20시 · 공유 폴더에 모으기</p>
+              <p class="card-v">날짜 11/28~30</p>
             </div>
             <div class="card-row" data-enter>
               <span class="card-k is-o">미정</span>
-              <p class="card-v">리허설 시간은 아직 논의 중</p>
+              <p class="card-v">여행지 (제주 또는 경주)</p>
             </div>
             <div class="card-row" data-enter>
               <span class="card-k is-n">다음 행동</span>
-              <p class="card-v">맡은 슬라이드를 한 파일에 합치기</p>
+              <p class="card-v">가족과 여행지 정하기</p>
             </div>
             <div class="card-actions">
               <a class="chip-btn" href="REFLOW_7조_프로토타입.html" data-enter>근거 보기</a>
@@ -708,16 +824,19 @@
         <div class="trust-brand" data-enter><span>ChatGPT</span></div>
         <div class="trust-brand" data-enter><span>Claude</span></div>
         <div class="trust-brand" data-enter><span>Gemini</span></div>
+        <div class="trust-brand" data-enter><span>Claude Code</span></div>
         <div class="trust-brand" data-enter><span>Perplexity</span></div>
+        <div class="trust-brand" data-enter><span>Lovable</span></div>
       </footer>
     </div>
 
     <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="메뉴" hidden>
       <ul class="overlay-list">
-        <li class="overlay-item"><a class="overlay-link" href="#features">기능</a></li>
-        <li class="overlay-item"><a class="overlay-link" href="#why">근거</a></li>
+        <li class="overlay-item"><a class="overlay-link" href="#pain">불편</a></li>
+        <li class="overlay-item"><a class="overlay-link" href="#features">해결</a></li>
+        <li class="overlay-item"><a class="overlay-link" href="#scenes">장면</a></li>
+        <li class="overlay-item"><a class="overlay-link" href="#try">써보기</a></li>
         <li class="overlay-item"><a class="overlay-link" href="#faq">FAQ</a></li>
-        <li class="overlay-item"><a class="overlay-link" href="REFLOW_7조_프로토타입.html">프로토타입</a></li>
       </ul>
       <div class="overlay-footer">
         <div class="overlay-bar" aria-hidden="true"></div>
@@ -726,68 +845,122 @@
     </div>
   </section>
 
+  <section class="section-block" id="pain">
+    <div class="block-wrap">
+      <p class="eyebrow reveal">어떤 점이 불편한가요</p>
+      <h2 class="reveal">AI를 여러 개 쓸수록, 하던 일로 돌아오기가 어려워집니다.</h2>
+      <p class="block-lead reveal">팀 과제를 할 때 논문 조사는 ChatGPT에, 기획은 Claude에, 비슷한 서비스 조사는 Gemini에, 코드는 Claude Code에 맡깁니다. 사흘 뒤에 다시 앉으면 “한계점은 어디서 정리하다 말았지?”가 됩니다.</p>
+      <div class="why-grid">
+        <article class="why-item reveal">
+          <h3>어디서 얘기했더라</h3>
+          <p>언제, 어떤 AI와, 무슨 주제로 이야기했는지 잘 기억나지 않습니다.</p>
+        </article>
+        <article class="why-item reveal">
+          <h3>한 가지 일이 여러 곳에</h3>
+          <p>AI마다 잘하는 일이 달라서, 같은 주제의 내용이 여기저기 나뉩니다.</p>
+        </article>
+        <article class="why-item reveal">
+          <h3>전부 다시 열어 봐야</h3>
+          <p>일을 이어서 하려면 AI마다 대화 목록을 하나씩 열어 확인해야 합니다.</p>
+        </article>
+      </div>
+      <p class="block-note reveal">사용자가 부주의해서가 아닙니다. 대화가 AI마다 따로 저장되는 구조가 그렇게 만듭니다.</p>
+    </div>
+  </section>
+
   <section class="section-two" id="features">
     <div class="s2-wrap">
       <h2 class="s2-title">
-        <span class="hl-mask"><span class="hl-line">카드만 봐도 다음이 보입니다.</span></span>
-        <span class="hl-mask"><span class="hl-line">근거에서 원본까지 이어집니다.</span></span>
+        <span class="hl-mask"><span class="hl-line">한눈에 보고, 확인하고,</span></span>
+        <span class="hl-mask"><span class="hl-line">바로 이어 갑니다.</span></span>
       </h2>
       <p class="s2-sub" data-enter>
-        모든 카드는 확정 · 미정 · 다음 행동 순서를 지킵니다.<br />
-        채팅 위 패널과 전체 작업대에서 같은 구조를 공유합니다.
+        REFLOW는 여러 AI 대화의 찾아보기이자 돌아오는 문입니다.<br />
+        기억을 더듬지 않아도 되고, 틀린 요약은 고칠 수 있습니다. AI를 대신하지는 않습니다.
       </p>
+      <ol class="flow" id="flow" aria-label="REFLOW가 대화를 이어 주는 순서">
+        <li class="flow-step"><strong>흩어진 대화</strong><span>여러 AI에 나뉜 이야기</span></li>
+        <li class="flow-step"><strong>요약 카드</strong><span>확정 · 미정 · 다음 행동</span></li>
+        <li class="flow-step"><strong>확인하고 고치기</strong><span>원문과 비교한 뒤 수정</span></li>
+        <li class="flow-step"><strong>바로 가기</strong><span>그 AI의 그 대화로 이동</span></li>
+      </ol>
 
       <div class="panel" data-enter>
-        <div class="reasoning-row" data-enter>
-          <span class="reasoning-dot" aria-hidden="true"></span>
-          <span class="reasoning-label">카드 요약 · 확정 · 미정 · 다음 행동</span>
-        </div>
-        <div class="workbench-card">
-          <div class="wb-head" data-enter>
-            <h3>조별 발표 자료 마감 맞추기</h3>
-            <span class="wb-tag">Claude · 과제</span>
+          <div class="reasoning-row" data-enter>
+            <span class="reasoning-dot" aria-hidden="true"></span>
+            <span class="reasoning-label">카드 한 장 · 확정 · 미정 · 다음 행동</span>
           </div>
-          <div class="wb-sec" data-enter>
-            <p class="wb-label"><span class="dot dot--c" aria-hidden="true"></span>확정</p>
-            <ul>
-              <li>마감: 목요일 20시</li>
-              <li>자료는 7조 공유 폴더에 모으기</li>
-            </ul>
-          </div>
-          <div class="wb-sec" data-enter>
-            <p class="wb-label"><span class="dot dot--o" aria-hidden="true"></span>미정</p>
-            <ul><li>리허설 시간</li></ul>
-          </div>
-          <div class="wb-sec" data-enter>
-            <p class="wb-label"><span class="dot dot--n" aria-hidden="true"></span>다음 행동</p>
-            <ul><li>각자 맡은 슬라이드를 한 파일에 합치기</li></ul>
-          </div>
+          <div class="workbench-card">
+            <div class="wb-head" data-enter>
+              <h3>2박 3일 여행 일정 짜기</h3>
+              <span class="wb-tag">ChatGPT · 여행</span>
+            </div>
+            <div class="wb-sec" data-enter>
+              <p class="wb-label"><span class="dot dot--c" aria-hidden="true"></span>확정</p>
+              <ul><li>날짜 11/28~30</li></ul>
+            </div>
+            <div class="wb-sec" data-enter>
+              <p class="wb-label"><span class="dot dot--o" aria-hidden="true"></span>미정</p>
+              <ul><li>여행지 (제주 또는 경주)</li></ul>
+            </div>
+            <div class="wb-sec" data-enter>
+              <p class="wb-label"><span class="dot dot--n" aria-hidden="true"></span>다음 행동</p>
+              <ul><li>가족과 여행지 정하기</li></ul>
+            </div>
           <div class="wb-foot" data-enter>
             <span>찾기 · 근거 보기 · 요약 수정</span>
             <span class="wb-go">바로 가기 →</span>
           </div>
         </div>
       </div>
+      <ul class="fn-list">
+        <li class="reveal"><strong>한눈에 보기</strong><span>어느 창이었는지 떠올리지 않아도 카드로 알아봅니다.</span></li>
+        <li class="reveal"><strong>요약 수정</strong><span>AI가 쓴 요약이 틀리면 직접 고칩니다.</span></li>
+        <li class="reveal"><strong>대화 보기</strong><span>카드를 누르면 대화 내용을 그대로 다시 봅니다.</span></li>
+        <li class="reveal"><strong>바로 가기</strong><span>버튼 한 번으로 그 AI의 그 대화에 도착합니다.</span></li>
+        <li class="reveal"><strong>두 가지 정렬</strong><span>최신 순, 또는 테마 순. 테마 안에서도 최근 것이 먼저입니다.</span></li>
+      </ul>
     </div>
   </section>
 
-  <section class="section-why" id="why">
-    <div class="why-wrap">
-      <h2>왜 카드로 모으나요</h2>
-      <p class="why-lead">작업기억의 한계를 넘지 않도록, 기억해야 할 내용을 카드에 맡겨 외재적 인지부하를 줄입니다.</p>
+  <section class="section-block" id="scenes">
+    <div class="block-wrap">
+      <p class="eyebrow reveal">이렇게 쓰입니다</p>
+      <h2 class="reveal">돌아오는 자리가 있으면, 다시 앉는 일이 짧아집니다.</h2>
       <div class="why-grid">
-        <article class="why-item">
-          <h3>맥락 유지</h3>
-          <p>창을 바꿔도 확정 · 미정 · 다음 행동이 같은 자리에 있어 흐름을 잃지 않습니다.</p>
+        <article class="why-item reveal">
+          <p class="eyebrow">유지 · 대학원생</p>
+          <h3 class="scene-quote">한계점은 어디서 쓰다 말았지?</h3>
+          <p>사흘 만에 팀 과제를 다시 엽니다. 테마 순으로 같은 과제를 모아 보고, 바로 가기로 그 대화에 돌아갑니다.</p>
         </article>
-        <article class="why-item">
-          <h3>인지적 오프로딩</h3>
-          <p>머릿속에 붙잡아 둘 내용을 카드에 두고, 지금은 다음 행동만 보면 됩니다.</p>
+        <article class="why-item reveal">
+          <p class="eyebrow">수경 · 직장인</p>
+          <h3 class="scene-quote">경주로 정했으니 카드를 고쳐 둬야지.</h3>
+          <p>가족과 여행지를 경주로 정한 뒤, 카드의 미정을 확정으로 옮기고 하던 대화로 돌아갑니다.</p>
         </article>
-        <article class="why-item">
-          <h3>검증 가능한 효과</h3>
-          <p>창 1 · 3 · 5개 조건에서 이전 답을 찾는 시간과 잘못된 창에 질문한 횟수로 비교합니다.</p>
+        <article class="why-item reveal">
+          <p class="eyebrow">송은 · 팀장</p>
+          <h3 class="scene-quote">5분밖에 안 남았는데.</h3>
+          <p>회의 직전, 수식은 ChatGPT에 있고 초안은 Claude에 있습니다. 검색으로 찾고 바로 그 대화를 엽니다.</p>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-try" id="try">
+    <div class="try-wrap">
+      <p class="eyebrow reveal">직접 보여 드립니다</p>
+      <h2 class="reveal">프로토타입을 이 순서로 눌러 보세요.</h2>
+      <ol class="try-steps">
+        <li class="reveal">최신 순 화면에서 여러 AI의 카드를 봅니다.</li>
+        <li class="reveal">테마 순을 누르면 같은 주제끼리 묶입니다.</li>
+        <li class="reveal">2박 3일 여행 일정 카드를 눌러 지난 대화를 그대로 봅니다.</li>
+        <li class="reveal">여행지를 경주로 정했다고 보고, 요약 수정에서 확정으로 옮긴 뒤 저장합니다.</li>
+        <li class="reveal">바로 가기로 해당 AI의 대화 화면으로 이동합니다.</li>
+      </ol>
+      <p class="try-note reveal">들어 있는 대화는 모두 지어낸 예시입니다. 예시 카드의 바로 가기는 각 AI의 첫 화면으로 가고, 카드에 실제 대화 주소를 넣으면 그 대화로 갑니다. 고친 내용은 이 브라우저에만 남습니다. REFLOW는 아이디나 비밀번호를 묻지 않습니다.</p>
+      <div class="cta-actions">
+        <a class="btn-primary" href="REFLOW_7조_프로토타입.html">프로토타입 열기</a>
       </div>
     </div>
   </section>
@@ -802,34 +975,34 @@
             <span class="faq-icon" aria-hidden="true"></span>
           </button>
           <div class="faq-a"><div>
-            <p>여러 AI 창에 흩어진 대화를 테마별 카드로 모아, 어디까지 정했는지 확인하고 하던 대화로 바로 돌아가게 합니다.</p>
+            <p>여러 AI에 흩어진 대화를 카드로 모아, 어디까지 정했는지 알아보고 하던 대화로 바로 돌아가게 합니다. 더 많은 대화가 아니라 돌아올 자리를 만듭니다.</p>
           </div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" type="button" aria-expanded="false">
-            카드 구조는 왜 고정되나요?
+            카드에는 무엇이 항상 같게 보이나요?
             <span class="faq-icon" aria-hidden="true"></span>
           </button>
           <div class="faq-a"><div>
-            <p>확정 · 미정 · 다음 행동 순서는 맥락 유지를 위한 규칙입니다. 순서를 바꾸면 한눈에 다음 행동을 읽기 어려워집니다.</p>
+            <p>AI 이름, 테마, 제목, 그리고 확정 · 미정 · 다음 행동이 모든 카드에서 같은 자리에 있습니다. 떠올리게 하지 않고 보고 알아보게 하기 위해서입니다.</p>
           </div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" type="button" aria-expanded="false">
-            근거 보기는 어떻게 쓰나요?
+            바로 가기는 로그인이 필요한가요?
             <span class="faq-icon" aria-hidden="true"></span>
           </button>
           <div class="faq-a"><div>
-            <p>요약 항목을 누르면 그 줄의 근거가 된 원문 메시지가 강조됩니다. 틀리면 요약 수정으로 바로 고칠 수 있습니다.</p>
+            <p>REFLOW는 아이디나 비밀번호를 묻지 않고 저장하지도 않습니다. 대화마다 있는 주소를 새 탭에서 열면, 이미 로그인해 둔 브라우저에서 그 대화가 열립니다.</p>
           </div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q" type="button" aria-expanded="false">
-            효과를 어떻게 검증하나요?
+            프로토타입의 대화는 진짜인가요?
             <span class="faq-icon" aria-hidden="true"></span>
           </button>
           <div class="faq-a"><div>
-            <p>창 1개 · 3개 · 5개 조건에서 이전 답을 찾는 시간과 잘못된 창에 질문한 횟수를 비교합니다.</p>
+            <p>모두 지어낸 예시입니다. 고친 내용은 각자의 브라우저에만 저장되고 다른 사람에게는 보이지 않습니다.</p>
           </div></div>
         </div>
       </div>
@@ -837,8 +1010,8 @@
   </section>
 
   <section class="section-cta">
-    <h2>흩어진 대화를 다시 흐르게</h2>
-    <p>프로토타입에서 패널과 전체 작업대를 직접 눌러 보며 REFLOW의 흐름을 확인해 보세요.</p>
+    <h2>더 많은 대화가 아니라, 돌아올 자리입니다.</h2>
+    <p>한눈에 알아보고, 대화를 확인해 고치고, 버튼 한 번으로 하던 일로 돌아가 보세요.</p>
     <div class="cta-actions">
       <a class="btn-primary" href="REFLOW_7조_프로토타입.html">프로토타입 열기</a>
       <a class="btn-ghost" href="#home">맨 위로</a>
@@ -913,6 +1086,62 @@
 
   var root = document.documentElement;
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function showReveals() {
+    var nodes = document.querySelectorAll(".reveal");
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      nodes.forEach(function (el) { el.classList.add("is-in"); });
+      return;
+    }
+    var groups = [];
+    nodes.forEach(function (el) {
+      var parent = el.parentElement;
+      var group = groups.filter(function (item) { return item.parent === parent; })[0];
+      if (!group) {
+        group = { parent: parent, list: [] };
+        groups.push(group);
+      }
+      group.list.push(el);
+    });
+    groups.forEach(function (group) {
+      group.list.forEach(function (el, index) {
+        el.style.transitionDelay = (index * 80) + "ms";
+      });
+    });
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in");
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+    nodes.forEach(function (el) { revealObserver.observe(el); });
+  }
+
+  function playFlow() {
+    var flow = document.getElementById("flow");
+    if (!flow) return;
+    var steps = flow.querySelectorAll(".flow-step");
+    function markOn() {
+      steps.forEach(function (step, index) {
+        window.setTimeout(function () { step.classList.add("is-on"); }, reducedMotion ? 0 : index * 420);
+      });
+    }
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      markOn();
+      return;
+    }
+    var flowObserver = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
+      flowObserver.disconnect();
+      markOn();
+    }, { threshold: 0.45 });
+    flowObserver.observe(flow);
+  }
+
+  showReveals();
+  playFlow();
+
   if (reducedMotion) {
     root.classList.remove("entrance", "entrance-s2");
     return;
@@ -968,6 +1197,11 @@
         { opacity: 1, transform: "translateY(0)" }
       ], { duration: 500, delay: 260, easing: LIFT }, s1Pool);
     }
+
+    anim(document.querySelector(".section-one .hero-kicker"), [
+      { opacity: 0, transform: "translateY(" + (10 * D) + "px)" },
+      { opacity: 1, transform: "translateY(0)" }
+    ], { duration: 550, delay: 140, easing: LIFT }, s1Pool);
 
     document.querySelectorAll(".section-one .hl-line").forEach(function (line, idx) {
       anim(line, [
