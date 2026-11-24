@@ -80,6 +80,17 @@
   --fs-h1: 20px; --fs-h2: 18px; --fs-h3: 16px; --fs-body: 14px; --fs-small: 12px;
   --fw-regular: 400; --fw-bold: 700;
   --lh-base: 1.4; --lh-button: 1;
+
+  /* ── 실험: 그라데이션 배경 + 반투명 카드 (try/a2ui-gradient, DesignSystem 미등록) ── */
+  --bg-page:
+    radial-gradient(900px 620px at 8% 0%, color-mix(in srgb, var(--indigo-200) 88%, transparent), transparent 70%),
+    radial-gradient(760px 560px at 96% 18%, color-mix(in srgb, var(--ochre-50) 90%, transparent), transparent 70%),
+    radial-gradient(1000px 700px at 70% 100%, color-mix(in srgb, var(--indigo-300) 62%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--indigo-50) 0%, var(--gray-100) 55%, var(--indigo-100) 100%);
+  --glass: color-mix(in srgb, var(--gray-0) 64%, transparent);
+  --glass-strong: color-mix(in srgb, var(--gray-0) 80%, transparent);
+  --glass-border: color-mix(in srgb, var(--gray-0) 85%, transparent);
+  --glass-blur: blur(18px) saturate(140%);
 }
 
 /* 다크 모드 — 시맨틱 토큰만 다시 매핑 (프리미티브는 유지) */
@@ -109,6 +120,16 @@ html[data-theme="dark"] {
   --color-status-error-bg: #3a1818;
   --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.45);
   --focus-ring: 2px solid var(--indigo-400);
+
+  /* 실험 토큰 — 다크 */
+  --bg-page:
+    radial-gradient(900px 620px at 8% 0%, color-mix(in srgb, var(--indigo-800) 72%, transparent), transparent 70%),
+    radial-gradient(760px 560px at 96% 18%, color-mix(in srgb, var(--ochre-700) 24%, transparent), transparent 70%),
+    radial-gradient(1000px 700px at 70% 100%, color-mix(in srgb, var(--indigo-700) 55%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--indigo-950) 0%, var(--gray-950) 55%, var(--indigo-950) 100%);
+  --glass: color-mix(in srgb, var(--gray-900) 62%, transparent);
+  --glass-strong: color-mix(in srgb, var(--gray-900) 80%, transparent);
+  --glass-border: color-mix(in srgb, var(--gray-0) 10%, transparent);
 }
 
 /* ==========================================================================
@@ -1001,6 +1022,101 @@ html[data-modal-open] .chat__thread {
 .status-badge[data-status="draft"] { background: var(--color-bg-gray); color: var(--color-text-secondary); }
 .status-badge[data-status="check"] { background: var(--color-status-warning-bg); color: var(--color-status-warning); }
 .status-badge[data-status="edited"] { background: var(--color-bg-primary-subtle); color: var(--color-primary-sub); }
+
+/* ==========================================================================
+   실험: 그라데이션 배경 + 반투명 카드 — 이 블록과 :root·다크의 실험 토큰만 지우면 원래대로 돌아간다
+   ========================================================================== */
+/* 배경은 화면에 고정된 층으로 깐다 (iOS·iPadOS 사파리는 background-attachment: fixed를 무시) */
+body, body[data-view="workspace"] { background: var(--color-bg-gray); }
+body::before {
+  content: ""; position: fixed; top: 0; left: 0; z-index: -1;
+  width: 100%; height: 100vh; height: 100lvh;
+  background: var(--bg-page);
+  pointer-events: none;
+}
+
+/* 가상 채팅 화면 */
+.chat__top {
+  background: var(--glass); border-bottom-color: var(--glass-border);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+.chat__nav { background: var(--glass); border-right-color: var(--glass-border); }
+.chat__recent-item:hover,
+.chat__recent-item[aria-current="true"] { background: var(--glass-strong); }
+.chat__switch { background: var(--glass); }
+.chat__intro, .chat__resumed {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+.chat__turn--user .chat__text { background: var(--glass-strong); border: 1px solid var(--glass-border); }
+.chat__composer-box {
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* REFLOW 패널 — 채팅 위에 뜨므로 더 진한 유리 */
+body[data-view="panel"] .reflow {
+  background: var(--glass-strong); border-left-color: var(--glass-border);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+/* 휴대폰에서는 패널이 화면 전체를 덮어 뒤 채팅이 얼룩처럼 비친다 → 불투명하게 */
+@media (max-width: 760px) {
+  body[data-view="panel"] .reflow {
+    background: var(--color-bg-white);
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+}
+.reflow__panel-head {
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* 전체 작업대 머리 — 인디고 띠 대신 유리 띠, 스크롤해도 위에 남는다 */
+.reflow__header {
+  background: var(--glass); color: var(--color-text-primary);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+body[data-view="workspace"] .reflow__header { position: sticky; top: 0; z-index: 3; }
+.reflow__course { color: var(--color-text-secondary); }
+.theme-toggle { background: color-mix(in srgb, var(--color-bg-gray) 85%, transparent); }
+.theme-toggle__btn { color: var(--color-text-secondary); }
+.theme-toggle__btn[aria-pressed="true"] { color: var(--color-text-primary); }
+.theme-toggle .tabs-indicator--pill { background: var(--color-bg-white); }
+html[data-theme="dark"] .theme-toggle .tabs-indicator--pill { background: var(--gray-800); }
+
+/* 찾기 바 · 카드 · 빈 상태 */
+.filter-bar, .empty-state {
+  background: var(--glass); border-color: var(--glass-border);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+body[data-view="panel"] .filter-bar { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.filter-chip, .theme-tag, .btn--secondary, .edit-form__input { background: var(--glass-strong); }
+.filter-chip:hover, .btn--secondary:hover { background: color-mix(in srgb, var(--color-bg-gray) 85%, transparent); }
+.summary-card {
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+}
+/* 선택된 카드의 2px 테두리와 마우스 올림 테두리는 그대로 둔다 */
+.summary-card:not(.summary-card--selected) { border-color: var(--glass-border); }
+.summary-card:not(.summary-card--selected):hover { border-color: var(--color-border-primary); }
+/* 패널 안에서는 바탕도 유리라 흰 선이 안 보인다 → 연한 회색 선 유지 */
+body[data-view="panel"] .summary-card { background: var(--glass-strong); }
+body[data-view="panel"] .summary-card:not(.summary-card--selected) { border-color: var(--color-border-light); }
+body[data-view="panel"] .summary-card:not(.summary-card--selected):hover { border-color: var(--color-border-primary); }
+
+/* 모달 */
+.modal__box {
+  background: var(--glass-strong);
+  backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%);
+}
+.modal__head, .modal__foot { border-color: var(--glass-border); }
+.evidence__list, .guide-extra { background: color-mix(in srgb, var(--color-bg-gray) 70%, transparent); }
+
+/* 투명도를 줄이도록 설정한 사람에게는 불투명 면으로 */
+@media (prefers-reduced-transparency: reduce) {
+  :root, html[data-theme="dark"] { --glass: var(--color-bg-white); --glass-strong: var(--color-bg-white); }
+}
 </style>
 </head>
 <body data-view="panel" data-panel="closed">
