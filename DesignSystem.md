@@ -69,7 +69,7 @@ AI 채팅 중 REFLOW 열기 → 카드 찾기(검색·AI 필터·정렬) → 카
 | Figma 변수 | CSS 변수 | 참조 | HEX | 용도 | 주의 |
 |---|---|---|---|---|---|
 | primary/main | `--color-primary-main` | indigo-900 | #241C4B | 헤더, 주요 버튼, 선택된 필터 칩 | 메인 컬러 |
-| primary/sub | `--color-primary-sub` | indigo-600 | #554A99 | 링크, 포커스 링, 선택된 카드 테두리, 작은 강조 텍스트(번호·활성 단계·랜딩 제목 강조) | 흰 배경 7.4:1, bg/primary-faint 위 6.9:1 |
+| primary/sub | `--color-primary-sub` | indigo-600 | #554A99 | 링크, 포커스 링, 선택된 카드 테두리, 랜딩 제목 강조 | 흰 배경 7.4:1, bg/primary-faint 위 6.9:1. 장식용 강조는 **한 화면에 2곳까지** (7장) |
 | primary/light | `--color-primary-light` | indigo-400 | #948DD9 | 보조 그래픽 요소 | **텍스트 금지** (대비 2.97:1) |
 | primary/point | `--color-primary-point` | ochre-500 | #E4A339 | '미정' 표시점 | **텍스트 금지**, 다른 곳에 쓰지 않음 |
 | text/primary | `--color-text-primary` | gray-900 | #1A1924 | 제목, 본문 | |
@@ -426,6 +426,12 @@ UI 코드를 만들기 전에 아래를 모두 통과해야 한다.
 - [ ] 글래스모피즘(blur 배경), 네온, 이모지 없음
 - [ ] 포인트 컬러(#E4A339)는 '미정' 표시점에만 썼다
 - [ ] `:root` 밖에 HEX 값 없음
+- [ ] 장식용 강조색(primary-sub)은 한 화면에 2곳까지. 링크·포커스처럼 기능으로 쓰는 색은 세지 않는다. 보라 강조를 여기저기 뿌리면 대표적인 AI 티가 난다
+- [ ] "X가 아니라 Y" 같은 대비 문장은 페이지에 1번만 쓴다
+- [ ] 섹션마다 같은 모양의 보조 라벨을 붙이지 않는다
+- [ ] 요약 항목을 한 줄 말줄임으로 자르지 않는다 (2줄까지 보이기)
+
+**검사 도구:** [Open Design Agent Kit](https://github.com/feimacode/open-design-agent-kit)를 `.cursor/mcp.json`으로 연결해 두었다. 키트의 반드시 고칠 규칙 7개(Tailwind 기본 보라, 히어로 그라데이션, 이모지 아이콘, 왼쪽 색 테두리 카드, 지어낸 수치, 채움 문구 등)와 AI 티 자동 검사 5종도 통과해야 한다.
 
 **선언 규칙:** UI 코드를 생성하기 전에 반드시 한 줄로 선언한다.
 > "이 UI에서 슬롭 디자인을 피하기 위해 X로 처리했습니다."

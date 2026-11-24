@@ -169,10 +169,7 @@
       margin-bottom: clamp(32px, 4vw, 64px);
       font-size: var(--fs-body); font-weight: var(--fw-bold);
     }
-    .section-head__num { font-variant-numeric: tabular-nums; min-width: 2ch; color: var(--color-primary-sub); }
-    .section--inverse .section-head__num { color: var(--color-text-inverse-secondary); }
-    .section-head__aside { margin-left: auto; font-weight: var(--fw-regular); color: var(--color-text-secondary); }
-    .section--inverse .section-head__aside { color: var(--color-text-inverse-secondary); }
+    .section-head__num { font-variant-numeric: tabular-nums; min-width: 2ch; }
 
     .display-1, .display-2, .display-3 { font-weight: var(--fw-bold); text-wrap: balance; }
     .display-1 { font-size: var(--fs-display-1); line-height: var(--lh-display); letter-spacing: -0.04em; }
@@ -217,7 +214,7 @@
       transition: color .15s ease;
     }
     .site-nav a:hover { color: var(--color-text-primary); }
-    .site-nav__num { font-size: var(--fs-small); color: var(--color-primary-sub); font-variant-numeric: tabular-nums; }
+    .site-nav__num { font-size: var(--fs-small); color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; }
     .site-nav a[aria-current="location"] {
       color: var(--color-text-primary); font-weight: var(--fw-bold);
       text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 8px;
@@ -267,15 +264,16 @@
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-1depth);
     }
+    .mini-card > * { flex-shrink: 0; }
     .mini-card__meta { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
     .mini-card__title {
       font-size: var(--fs-h3); font-weight: var(--fw-bold); line-height: var(--lh-base);
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
     }
     .mini-card__rows { display: grid; gap: var(--space-2); }
-    .mini-row { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; font-size: var(--fs-body); }
-    .mini-row dt { display: flex; align-items: center; gap: 6px; font-weight: var(--fw-bold); }
-    .mini-row dd { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mini-row { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: start; font-size: var(--fs-body); }
+    .mini-row dt { display: flex; align-items: center; gap: 6px; height: calc(var(--fs-body) * var(--lh-base)); font-weight: var(--fw-bold); }
+    .mini-row dd { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
     .mini-row dd.is-empty { color: var(--color-text-tertiary); }
     .mini-card__foot {
       display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
@@ -295,13 +293,14 @@
     .hero__meta p:first-child { color: var(--color-text-primary); font-weight: var(--fw-bold); }
     .hero__meta p:last-child { text-align: right; }
     .hero__title { margin-top: clamp(56px, 9vw, 144px); }
-    .hero__title .line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+    .hero__title .line { display: block; }
     .hero__title .line > span { display: block; }
     .hero__title .line:nth-child(2) { margin-left: calc((100% + var(--space-6)) / 12 * 3); color: var(--color-primary-sub); }
-    .motion-ok .hero__title .line > span { animation: rise 1s var(--ease-out) both; }
+    .motion-ok .hero__title .line > span { animation: rise 1s var(--ease-out) backwards; }
     .motion-ok .hero__title .line:nth-child(2) > span { animation-delay: .09s; }
     .motion-ok .hero [data-enter] { animation: fade-up .8s var(--ease-out) .35s both; }
-    @keyframes rise { from { transform: translateY(105%); } to { transform: none; } }
+    /* 아래에서 올라오며 줄 높이만큼만 보이게: 움직인 거리만큼 아래를 잘라 낸다 */
+    @keyframes rise { from { transform: translateY(100%); clip-path: inset(0 0 100% 0); } to { transform: none; clip-path: inset(0 0 0 0); } }
     @keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
     .hero__foot {
       display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); row-gap: var(--space-6);
@@ -368,11 +367,10 @@
     }
     .gather--live .gather-step { color: var(--color-text-secondary); }
     .gather--live .gather-step.is-active { color: var(--color-text-primary); border-top-color: currentColor; }
-    .gather--live .gather-step.is-active .gather-step__num { color: var(--color-primary-sub); }
     .gather--live .gather-step__desc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease-out); }
     .gather--live .gather-step.is-active .gather-step__desc { grid-template-rows: 1fr; }
     .gather--live .gather-step__desc > p { overflow: hidden; min-height: 0; }
-    .gather--live .flow-item { height: 248px; will-change: transform; }
+    .gather--live .flow-item { height: 288px; will-change: transform; }
     .gather--live .flow-item__window,
     .gather--live .flow-item__card { position: absolute; inset: 0; }
     .gather--live .flow-item > .flow-item__window { display: flex; opacity: var(--win, 1); }
@@ -387,7 +385,7 @@
       margin-top: clamp(48px, 6vw, 96px);
     }
     .pain { padding-top: var(--space-4); border-top: 1px solid currentColor; }
-    .pain__num { font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-primary-sub); }
+    .pain__num { font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
     .pain__title { margin-top: clamp(24px, 3vw, 48px); }
     .pain__desc { margin-top: var(--space-3); color: var(--color-text-secondary); line-height: var(--lh-reading); max-width: 24em; }
     .problem-note {
@@ -460,7 +458,7 @@
       min-height: 52px; padding: 0 var(--space-5); flex: none;
       border-bottom: 1px solid var(--color-border-light);
     }
-    .transcript__title { font-size: var(--fs-body); font-weight: var(--fw-bold); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .transcript__title { font-size: var(--fs-body); font-weight: var(--fw-bold); padding-block: var(--space-3); }
     .transcript__state { font-size: var(--fs-small); color: var(--color-text-secondary); white-space: nowrap; }
     .transcript[data-resumed="true"] .transcript__state { color: var(--color-primary-sub); font-weight: var(--fw-bold); }
     .transcript__body { flex: 1; overflow-y: auto; padding: var(--space-4); display: grid; gap: var(--space-1); align-content: start; }
@@ -494,7 +492,7 @@
     }
     .feature:nth-child(odd) { border-right: 1px solid var(--color-border-default); }
     .feature:nth-child(even) { padding-left: var(--space-7); padding-right: 0; }
-    .feature__num { padding-top: .5em; font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-primary-sub); }
+    .feature__num { padding-top: .5em; font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
     .feature__desc { margin-top: var(--space-3); color: var(--color-text-secondary); line-height: var(--lh-reading); max-width: 26em; }
     .feature__specimen { margin-top: var(--space-6); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); font-size: var(--fs-body); font-weight: var(--fw-bold); }
     .feature__specimen .legend-inline { display: inline-flex; align-items: center; gap: var(--space-2); }
@@ -564,7 +562,7 @@
       background: var(--color-bg-white);
       border-left: 1px solid var(--color-border-default);
       box-shadow: var(--shadow-overlay);
-      overflow: hidden;
+      overflow-y: auto;
       view-transition-name: reflow-surface;
     }
     .mock-panel__head { display: flex; align-items: baseline; justify-content: space-between; }
@@ -580,7 +578,7 @@
       position: absolute; inset: 0; display: none;
       padding: var(--space-6);
       background: var(--color-bg-gray);
-      overflow: hidden;
+      overflow-y: auto;
       view-transition-name: reflow-surface;
     }
     .mock-filter { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
@@ -699,10 +697,10 @@
       line-height: var(--lh-reading);
     }
     .try__steps li:last-child { border-bottom: 1px solid var(--color-border-light); }
-    .try__steps li::before { content: counter(step, decimal-leading-zero); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-primary-sub); }
+    .try__steps li::before { content: counter(step, decimal-leading-zero); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
     .try__note { grid-column: 4 / span 9; margin-top: var(--space-4); font-size: var(--fs-body); color: var(--color-text-secondary); line-height: var(--lh-reading); }
 
-    .site-footer { padding-bottom: var(--space-7); overflow: hidden; }
+    .site-footer { padding-bottom: var(--space-7); }
     /* 컨테이너 폭에 딱 맞도록 SVG textLength로 맞춘다 (글꼴마다 글자 폭이 달라서) */
     .site-footer__mark { display: block; width: 100%; height: auto; overflow: visible; user-select: none; }
     .site-footer__mark text { font-family: var(--font-family); font-weight: var(--fw-bold); letter-spacing: -0.06em; fill: currentColor; }
@@ -773,6 +771,9 @@
       .mock-grid { grid-template-columns: 1fr; }
       .message { grid-template-columns: 1fr; gap: var(--space-1); }
       .try__steps li { grid-template-columns: 40px minmax(0, 1fr); }
+    }
+    @media (max-width: 400px) {
+      .mini-row { grid-template-columns: minmax(0, 1fr); row-gap: 2px; }
     }
   </style>
 </head>
@@ -867,7 +868,7 @@
   <!-- 01 문제 -->
   <section class="section" id="problem" aria-labelledby="problem-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">01</span><span>문제</span><span class="section-head__aside">만들게 된 이유</span></header>
+      <header class="section-head"><span class="section-head__num">01</span><span>문제</span></header>
       <h2 class="display-2 reveal" id="problem-title">AI 창이 늘수록,<br />어느 창에서 무슨 얘기를 했는지 잊습니다.</h2>
       <ol class="pain-list">
         <li class="pain reveal">
@@ -887,7 +888,7 @@
         </li>
       </ol>
       <div class="problem-note reveal">
-        <p>사용자가 부주의해서가 아닙니다. 대화가 AI마다 따로 저장되는 구조가 그렇게 만듭니다. REFLOW는 더 많은 대화가 아니라, 돌아올 자리를 만듭니다.</p>
+        <p>대화가 AI마다 따로 저장되는 구조라서 생기는 일입니다. REFLOW는 흩어진 대화로 돌아올 자리를 만듭니다.</p>
       </div>
     </div>
   </section>
@@ -895,7 +896,7 @@
   <!-- 02 직접 해보기 -->
   <section class="section section--tint" id="demo" aria-labelledby="demo-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">02</span><span>직접 해보기</span><span class="section-head__aside">근거 보기 · 요약 수정 · 바로 가기</span></header>
+      <header class="section-head"><span class="section-head__num">02</span><span>직접 해보기</span></header>
       <div class="intro">
         <h2 class="display-2 reveal" id="demo-title">요약 한 줄을 누르면,<br />근거가 된 원문이 보입니다.</h2>
         <p class="lead reveal">카드는 AI가 쓴 요약입니다. 그래서 근거를 확인할 수 있어야 하고, 틀리면 직접 고칠 수 있어야 합니다.</p>
@@ -928,7 +929,7 @@
   <!-- 03 기능 -->
   <section class="section" id="features" aria-labelledby="features-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">03</span><span>기능</span><span class="section-head__aside">핵심 기능 4 · 보조 기능 4</span></header>
+      <header class="section-head"><span class="section-head__num">03</span><span>기능</span></header>
       <h2 class="display-2 reveal" id="features-title">네 가지로 충분합니다.</h2>
       <ol class="feature-list">
         <li class="feature reveal">
@@ -997,7 +998,7 @@
   <!-- 04 두 가지 보기 -->
   <section class="section section--tint" id="views" aria-labelledby="views-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">04</span><span>두 가지 보기</span><span class="section-head__aside">패널 · 전체 작업대</span></header>
+      <header class="section-head"><span class="section-head__num">04</span><span>두 가지 보기</span></header>
       <div class="intro">
         <h2 class="display-2 reveal" id="views-title">채팅하다 잠깐 열고,<br />필요하면 한 번에 펼칩니다.</h2>
         <p class="lead reveal">지금 하던 대화를 두고 다른 카드를 확인할 때는 패널을, 모든 카드를 정리할 때는 전체 작업대를 씁니다.</p>
@@ -1041,7 +1042,7 @@
   <!-- 05 근거 -->
   <section class="section section--inverse" id="why" aria-labelledby="why-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">05</span><span>근거</span><span class="section-head__aside">키워드가 화면 규칙이 되기까지</span></header>
+      <header class="section-head"><span class="section-head__num">05</span><span>근거</span></header>
       <div class="intro">
         <h2 class="display-2 reveal" id="why-title">기억은 카드에 맡기고,<br />머리는 다음 행동에.</h2>
         <p class="lead reveal">작업기억의 한계, 외재적 인지부하, 인지적 오프로딩. 네 가지 개념을 화면에서 지키는 규칙으로 바꿨습니다.</p>
@@ -1063,7 +1064,7 @@
           <span class="principle__num">03</span>
           <h3 class="principle__term display-3">외재적 인지부하</h3>
           <p class="principle__meaning">과제 자체가 아니라, 정보가 흩어진 방식 때문에 생기는 불필요한 부담.</p>
-          <p class="principle__rule"><strong>화면에서는</strong>색과 장식이 아니라 크기 · 굵기 · 여백으로 구분합니다.</p>
+          <p class="principle__rule"><strong>화면에서는</strong>크기 · 굵기 · 여백으로만 구분합니다. 색과 장식은 쓰지 않습니다.</p>
         </li>
         <li class="principle reveal">
           <span class="principle__num">04</span>
@@ -1078,7 +1079,7 @@
   <!-- 06 검증 -->
   <section class="section" id="verify" aria-labelledby="verify-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">06</span><span>검증</span><span class="section-head__aside">일반 화면 vs 카드 화면</span></header>
+      <header class="section-head"><span class="section-head__num">06</span><span>검증</span></header>
       <div class="intro">
         <h2 class="display-2 reveal" id="verify-title">창이 1개, 3개, 5개일 때를<br />비교합니다.</h2>
         <p class="lead reveal">같은 과제를 일반 화면과 카드 화면에서 해 보고, 창이 늘어날 때 두 가지가 어떻게 달라지는지 잽니다.</p>
@@ -1653,11 +1654,11 @@
     var items = Array.prototype.slice.call(canvas.children);
     var SCATTER = [
       { x: -0.04, y: 0.14, r: -5 },
-      { x: 0.34, y: -0.06, r: 4 },
+      { x: 0.34, y: 0.01, r: 4 },
       { x: 0.10, y: 0.48, r: 3 },
       { x: 0.50, y: 0.34, r: -4 }
     ];
-    var mq = window.matchMedia("(min-width: 961px) and (min-height: 600px)");
+    var mq = window.matchMedia("(min-width: 961px) and (min-height: 700px)");
     var geo = [];
     var live = false;
     var ticking = false;
