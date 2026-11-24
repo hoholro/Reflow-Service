@@ -78,8 +78,8 @@ AI 채팅 중 REFLOW 열기 → 카드 찾기(검색·AI 필터·정렬) → 카
 | text/disabled | `--color-text-disabled` | gray-400 | #A4A4AC | 비활성 상태 | 읽어야 하는 텍스트에 쓰지 않음 |
 | text/status | `--color-text-status` | indigo-500 | #7166BC | 개수·상태값 강조 | 흰 배경 위에서만 |
 | text/inverse | `--color-text-inverse` | gray-0 | #FFFFFF | 어두운 배경 위 텍스트 | |
-| border/default | `--color-border-default` | gray-300 | #D2D2D8 | 카드·입력창 테두리 | |
-| border/light | `--color-border-light` | gray-200 | #E6E6EB | 구분선 | |
+| border/default | `--color-border-default` | gray-300 | #D2D2D8 | 입력창·버튼·칩 같은 조작 요소 테두리, 패널 가장자리 | |
+| border/light | `--color-border-light` | gray-200 | #E6E6EB | 구분선, 카드·찾기 바 같은 큰 박스(1depth) 테두리 | |
 | border/primary | `--color-border-primary` | indigo-200 | #D8D7F8 | 카드 hover 테두리, 근거 강조 테두리 | |
 | bg/white | `--color-bg-white` | gray-0 | #FFFFFF | 카드, 패널 | |
 | bg/gray | `--color-bg-gray` | gray-100 | #F2F2F6 | 페이지 배경, 섹션 박스 | |
@@ -299,7 +299,8 @@ fallback: `-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans 
 [액션]  근거 보기 · 요약 수정                      [바로 가기 →]
 ```
 
-- 배경 `--color-bg-white`, 테두리 1px `--color-border-default`, radius `--radius-1depth`, 그림자 없음.
+- 배경 `--color-bg-white`, 테두리 1px `--color-border-light`, radius `--radius-1depth`, 그림자 없음.
+- 카드는 그림자가 아니라 연한 선과 '흰 카드 · 회색(또는 옅은 인디고) 배경'의 차이로 구분한다. 그림자는 떠 있는 패널·모달만의 신호로 남겨 둔다.
 - hover: 테두리만 `--color-border-primary`로 바뀐다. 떠오르는 효과(translate, shadow)는 쓰지 않는다.
 - 선택됨: 테두리 2px `--color-primary-sub`.
 - 섹션 표시점(8px 원):
