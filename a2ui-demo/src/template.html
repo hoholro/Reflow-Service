@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko" class="a2ui-light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>REFLOW — A2UI로 그린 카드</title>
+  <meta name="description" content="REFLOW 요약 카드를 A2UI 1.0 메시지로 받아 오픈소스 렌더러로 그린 실험 페이지" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' ry='4' fill='%23241C4B'/%3E%3Cpath fill='%23FFFFFF' d='M10.2 8.5h6.1c3.05 0 5.05 1.7 5.05 4.35 0 2.15-1.2 3.55-3.15 4.05l3.55 6.6h-3.55l-3.25-6.15h-1.65v6.15H10.2V8.5zm3.1 2.45v4.2h2.45c1.55 0 2.45-.8 2.45-2.1s-.9-2.1-2.45-2.1H13.3z'/%3E%3C/svg%3E" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    /* 1) 토큰 — DesignSystem.md 값 + 이 실험에서만 쓰는 그라데이션·유리 토큰 */
+    :root {
+      --indigo-50: #f6f6ff; --indigo-100: #ebebfd; --indigo-200: #d8d7f8; --indigo-300: #bab7ec;
+      --indigo-600: #554a99; --indigo-800: #2f265d; --indigo-900: #241c4b;
+      --gray-0: #ffffff; --gray-100: #f2f2f6; --gray-200: #e6e6eb; --gray-300: #d2d2d8;
+      --gray-500: #72727b; --gray-600: #5a5a64; --gray-900: #1a1924;
+      --ochre-50: #fff3e4;
+
+      --color-primary-main: var(--indigo-900);
+      --color-primary-sub: var(--indigo-600);
+      --color-text-primary: var(--gray-900);
+      --color-text-secondary: var(--gray-600);
+      --color-text-inverse: var(--gray-0);
+      --color-border-default: var(--gray-300);
+      --color-border-light: var(--gray-200);
+      --color-bg-white: var(--gray-0);
+      --color-bg-gray: var(--gray-100);
+      --radius-1depth: 8px; --radius-2depth: 6px; --radius-flag: 4px;
+      --focus-ring: 2px solid var(--color-primary-sub);
+      --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+      /* 실험: 그라데이션 배경 + 반투명 카드 (DesignSystem 미등록) */
+      --bg-page:
+        radial-gradient(900px 620px at 8% 0%, color-mix(in srgb, var(--indigo-200) 88%, transparent), transparent 70%),
+        radial-gradient(760px 560px at 96% 18%, color-mix(in srgb, var(--ochre-50) 90%, transparent), transparent 70%),
+        radial-gradient(1000px 700px at 70% 100%, color-mix(in srgb, var(--indigo-300) 62%, transparent), transparent 70%),
+        linear-gradient(180deg, var(--indigo-50) 0%, var(--gray-100) 55%, var(--indigo-100) 100%);
+      --glass: color-mix(in srgb, var(--gray-0) 64%, transparent);
+      --glass-strong: color-mix(in srgb, var(--gray-0) 80%, transparent);
+      --glass-border: color-mix(in srgb, var(--gray-0) 85%, transparent);
+      --glass-blur: blur(18px) saturate(140%);
+    }
+
+    /* 2) 기본 */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: var(--font-family); font-size: 16px; line-height: 1.5;
+      color: var(--color-text-primary);
+      background: var(--bg-page) fixed;
+      background-color: var(--gray-100);
+      -webkit-font-smoothing: antialiased; word-break: keep-all;
+    }
+    h1, h2, p, ul, ol { margin: 0; }
+    ul, ol { padding: 0; list-style: none; }
+    a { color: inherit; }
+    :focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+    .container { width: 100%; max-width: 1352px; margin-inline: auto; padding-inline: clamp(20px, 4vw, 56px); }
+
+    /* 3) 헤더 */
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      background: var(--glass); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 64px; }
+    .wordmark { font-size: 18px; font-weight: 700; letter-spacing: -0.03em; text-decoration: none; }
+    .site-header nav { display: flex; align-items: center; gap: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px;
+      border: 1px solid transparent; border-radius: var(--radius-2depth);
+      font: inherit; font-size: 14px; font-weight: 700; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer;
+    }
+    .btn--primary { background: var(--color-primary-main); color: var(--color-text-inverse); }
+    .btn--secondary { background: var(--glass-strong); border-color: var(--color-border-default); color: var(--color-text-primary); }
+    .btn--text { height: 32px; padding: 0 8px; background: transparent; color: var(--color-primary-sub); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* 4) 소개 */
+    .intro { padding: clamp(40px, 6vw, 88px) 0 clamp(32px, 4vw, 56px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 20px; align-items: end; }
+    .intro__eyebrow { grid-column: 1 / -1; font-size: 14px; font-weight: 700; color: var(--color-text-secondary); }
+    .intro h1 { grid-column: 1 / span 8; font-size: clamp(2rem, 1.1rem + 3vw, 3.75rem); line-height: 1.12; letter-spacing: -0.035em; font-weight: 700; text-wrap: balance; }
+    .intro__lead { grid-column: 9 / span 4; font-size: 17px; line-height: 1.6; color: var(--color-text-secondary); }
+    .intro__lead code { font-family: var(--font-mono); font-size: .9em; }
+    .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-bottom: 20px; }
+    .counter { font-size: 14px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+
+    /* 5) 갤러리 + 메시지 패널 */
+    .workspace { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 24px; align-items: start; padding-bottom: 96px; }
+    .gallery {
+      grid-column: 1 / span 8;
+      columns: 3 240px; column-gap: 16px;
+
+      /* A2UI 기본 카탈로그 테마: CSS 변수로 REFLOW 토큰을 넘긴다 */
+      --a2ui-color-on-background: var(--color-text-primary);
+      --a2ui-text-color-text: var(--color-text-primary);
+      --a2ui-text-caption-color: var(--color-text-secondary);
+      --a2ui-color-surface: var(--glass);
+      --a2ui-color-on-surface: var(--color-text-primary);
+      --a2ui-color-primary: var(--color-primary-main);
+      --a2ui-color-primary-hover: var(--indigo-800);
+      --a2ui-color-on-primary: var(--color-text-inverse);
+      --a2ui-color-secondary-hover: var(--color-bg-gray);
+      --a2ui-color-on-secondary: var(--color-text-primary);
+      --a2ui-color-border: var(--color-border-light);
+      --a2ui-border-radius: var(--radius-1depth);
+      --a2ui-card-background: var(--glass);
+      --a2ui-card-border: 1px solid var(--glass-border);
+      --a2ui-card-box-shadow: none;
+      --a2ui-card-margin: 0;
+      --a2ui-card-padding: 18px;
+      --a2ui-button-border-radius: var(--radius-2depth);
+      --a2ui-button-margin: 0;
+      --a2ui-button-padding: 8px 12px;
+      --a2ui-button-font-weight: 700;
+      --a2ui-button-background: var(--glass-strong);
+      --a2ui-button-border: 1px solid var(--color-border-default);
+      --a2ui-font-size: 14px;
+      --a2ui-font-scale: 1.14;
+      --a2ui-grid-base: 6px;
+      --a2ui-column-gap: 4px;
+      --a2ui-row-gap: 8px;
+      --a2ui-divider-spacing: 12px;
+      --a2ui-line-height-body: 1.5;
+      --a2ui-line-height-headings: 1.35;
+    }
+    .surface-item {
+      break-inside: avoid; margin-bottom: 16px;
+      border-radius: var(--radius-1depth);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+      outline: 2px solid transparent; outline-offset: 2px;
+      transition: outline-color .15s ease;
+      cursor: pointer;
+    }
+    .surface-item:hover { outline-color: var(--glass-border); }
+    .surface-item.is-selected { outline-color: var(--color-primary-sub); }
+    .surface-item:focus-visible { outline: var(--focus-ring); }
+
+    .inspector { grid-column: 9 / span 4; position: sticky; top: 84px; display: grid; gap: 16px; min-width: 0; }
+    .gallery, .panel { min-width: 0; }
+    .panel {
+      padding: 18px; border-radius: var(--radius-1depth);
+      background: var(--glass); border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .panel__label { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); }
+    .panel__title { margin-top: 4px; font-size: 16px; font-weight: 700; }
+    .panel pre {
+      margin: 12px 0 0; max-width: 100%; max-height: 46vh; overflow: auto; padding: 12px;
+      border-radius: var(--radius-2depth); background: var(--glass-strong); border: 1px solid var(--color-border-light);
+      font-family: var(--font-mono); font-size: 12px; line-height: 1.5; white-space: pre;
+    }
+    .events { margin-top: 12px; display: grid; gap: 8px; }
+    .events li { display: grid; gap: 2px; padding: 8px 10px; border-radius: var(--radius-2depth); background: var(--glass-strong); border: 1px solid var(--color-border-light); font-size: 13px; }
+    .events code { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-secondary); overflow-wrap: anywhere; }
+    .events .event-empty { background: none; border: 0; padding: 0; color: var(--color-text-secondary); line-height: 1.6; }
+    .note { font-size: 13px; line-height: 1.6; color: var(--color-text-secondary); }
+    .note a { color: var(--color-primary-sub); }
+
+    @media (max-width: 1024px) {
+      .intro h1, .intro__lead { grid-column: 1 / -1; }
+      .gallery, .inspector { grid-column: 1 / -1; }
+      .inspector { position: static; }
+    }
+    @media (max-width: 640px) {
+      .site-header nav .btn--text { display: none; }
+      .gallery { columns: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="wordmark" href="index.html">REFLOW</a>
+    <nav aria-label="페이지 이동">
+      <a class="btn btn--text" href="index.html">랜딩</a>
+      <a class="btn btn--primary" href="prototype.html">프로토타입 열기</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="intro" aria-labelledby="page-title">
+    <p class="intro__eyebrow">실험 · A2UI 1.0</p>
+    <h1 id="page-title">에이전트가 보낸 JSON이<br />그대로 REFLOW 카드가 됩니다.</h1>
+    <p class="intro__lead">아래 카드 12장은 HTML로 직접 그리지 않았습니다. A2UI 1.0 메시지를 Google의 오픈소스 렌더러 <code>@a2ui/lit</code>가 받아 그렸습니다. 카드를 누르면 그 메시지가, 버튼을 누르면 에이전트에게 돌아가는 이벤트가 패널에 나타납니다.</p>
+  </section>
+
+  <div class="controls">
+    <button class="btn btn--secondary" type="button" id="replay">메시지 다시 받기</button>
+    <p class="counter" id="counter" aria-live="polite">메시지를 받는 중</p>
+  </div>
+
+  <div class="workspace">
+    <div class="gallery" id="gallery" aria-label="A2UI로 그린 카드"></div>
+    <aside class="inspector" aria-label="A2UI 메시지와 이벤트">
+      <section class="panel">
+        <p class="panel__label">에이전트 → 화면 (A2UI 메시지)</p>
+        <p class="panel__title" id="messageTitle"></p>
+        <pre><code id="messageView"></code></pre>
+      </section>
+      <section class="panel">
+        <p class="panel__label">화면 → 에이전트 (이벤트)</p>
+        <ol class="events" id="eventList" aria-live="polite"></ol>
+      </section>
+      <p class="note">카드 내용은 <a href="prototype.html">프로토타입</a>의 예시 대화와 같습니다. 렌더러: <code>@a2ui/lit</code> 0.16.0 · <code>@a2ui/web_core</code> 0.16.1 (Apache-2.0)</p>
+    </aside>
+  </div>
+</main>
+
+<script>/*__A2UI_BUNDLE__*/</script>
+</body>
+</html>

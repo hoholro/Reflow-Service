@@ -100,6 +100,17 @@
       --gutter: clamp(20px, 4vw, 56px);
       --content-max: 1240px;
       --section-y: clamp(88px, 4.5rem + 5vw, 168px);
+
+      /* ── 실험: 그라데이션 배경 + 반투명 카드 (try/a2ui-gradient, DesignSystem 미등록) ── */
+      --bg-page:
+        radial-gradient(1100px 760px at 6% 0%, color-mix(in srgb, var(--indigo-200) 88%, transparent), transparent 70%),
+        radial-gradient(900px 640px at 98% 22%, color-mix(in srgb, var(--ochre-50) 90%, transparent), transparent 70%),
+        radial-gradient(1200px 820px at 70% 100%, color-mix(in srgb, var(--indigo-300) 62%, transparent), transparent 70%),
+        linear-gradient(180deg, var(--indigo-50) 0%, var(--gray-100) 55%, var(--indigo-100) 100%);
+      --glass: color-mix(in srgb, var(--gray-0) 64%, transparent);
+      --glass-strong: color-mix(in srgb, var(--gray-0) 80%, transparent);
+      --glass-border: color-mix(in srgb, var(--gray-0) 85%, transparent);
+      --glass-blur: blur(18px) saturate(140%);
     }
 
     /* ==================================================================
@@ -743,6 +754,38 @@
     /* ==================================================================
        5) states · reveal · responsive
        ================================================================== */
+    /* ==================================================================
+       실험: 그라데이션 배경 + 반투명 카드 — 이 블록과 :root의 실험 토큰만 지우면 원래대로 돌아간다
+       ================================================================== */
+    body { background: var(--bg-page) fixed; background-color: var(--gray-100); }
+    .gather, .section--tint, .cta, .site-footer { background: transparent; }
+    .site-header {
+      background: var(--glass); border-bottom-color: var(--glass-border);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .site-header[data-scrolled="true"] { border-bottom-color: var(--glass-border); }
+    .mini-card, .summary-card, .transcript, .views-stage, .window, .condition__mock, .mock-panel, .mock-history {
+      background: var(--glass); border-color: var(--glass-border);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .condition__mock { border: 1px solid var(--glass-border); }
+    .condition__mock .mini-card, .mock-panel .mini-card, .mock-workspace .mini-card { background: var(--glass-strong); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .mock-workspace { background: color-mix(in srgb, var(--gray-0) 35%, transparent); }
+    .mock-tabs span { background: var(--glass-strong); border-color: var(--glass-border); }
+    .transcript__head, .transcript__composer { border-color: var(--glass-border); }
+    .field, .segmented, .chip, .btn--secondary, .mock-search { background: var(--glass-strong); }
+    .bubble--user { background: color-mix(in srgb, var(--gray-100) 80%, transparent); }
+    .a2ui-teaser__action { margin-top: var(--space-5); }
+    .a2ui-teaser { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); row-gap: var(--space-6); align-items: center; }
+    .a2ui-teaser__copy { grid-column: 1 / span 6; }
+    .a2ui-teaser__code {
+      grid-column: 7 / span 6; min-width: 0; margin: 0; padding: var(--space-5); overflow-x: auto;
+      background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-1depth);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px; line-height: 1.6; color: var(--color-text-secondary);
+    }
+    @media (max-width: 960px) { .a2ui-teaser__copy, .a2ui-teaser__code { grid-column: 1 / -1; } }
+
     .motion-ok .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
     .motion-ok .reveal.is-in { opacity: 1; transform: none; }
 
@@ -1283,6 +1326,24 @@
             <tr><th scope="row">확인 방법의 한계</th><td>지어낸 대화, 적은 인원, 짧은 과제로 확인합니다.</td><td>실제 대화를 쓰는 생활 속 연구로 넓힙니다.</td></tr>
           </tbody>
         </table>
+      </div>
+      <div class="sub-block a2ui-teaser">
+        <div class="a2ui-teaser__copy">
+        <h3 class="sub-block__title display-3 reveal">확장 실험: AI가 보낸 JSON으로 카드를 그립니다.</h3>
+        <p class="sub-block__lead reveal">Google의 생성형 UI 프로토콜 A2UI 1.0으로 REFLOW 카드 12장을 그려 봤습니다. 에이전트가 메시지를 보내면 화면이 카드를 그리고, 버튼을 누르면 이벤트가 에이전트로 돌아갑니다. 이 방식이면 AI 대화창 안에서도 같은 카드를 띄울 수 있습니다.</p>
+        <p class="a2ui-teaser__action reveal"><a class="btn btn--secondary" href="a2ui.html">A2UI로 그린 카드 보기 →</a></p>
+        </div>
+        <pre class="a2ui-teaser__code reveal" aria-label="A2UI 메시지 예시"><code>{ "version": "1.0",
+  "updateComponents": {
+    "surfaceId": "c01",
+    "components": [
+      { "id": "root", "component": "Card", "child": "body" },
+      { "id": "title", "component": "Text",
+        "text": { "@path": "/titleMarkdown" } },
+      { "id": "go_button", "component": "Button",
+        "variant": "primary",
+        "action": { "event": { "name": "open_conversation" } } }
+    ] } }</code></pre>
       </div>
     </div>
   </section>
