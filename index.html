@@ -69,6 +69,8 @@
 
       /* Elevation — 채팅 위 패널, 모달에만 */
       --shadow-overlay: 0 8px 24px rgba(36, 28, 75, 0.12);
+      /* 랜딩 카드용 (제안값 — DesignSystem·Figma 미등록) */
+      --shadow-card: 0 4px 16px rgba(36, 28, 75, 0.08);
 
       /* Focus */
       --focus-ring: 2px solid var(--color-primary-sub);
@@ -161,16 +163,6 @@
     .section--inverse { background: var(--color-bg-inverse); color: var(--color-text-inverse); }
     .section--inverse :focus-visible { outline-color: var(--color-text-inverse); }
 
-    /* 스위스 그리드식 섹션 머리: 위쪽 1px 선 + 번호 + 이름 */
-    .section-head {
-      display: flex; align-items: baseline; gap: var(--space-4);
-      padding-top: var(--space-3);
-      border-top: 1px solid currentColor;
-      margin-bottom: clamp(32px, 4vw, 64px);
-      font-size: var(--fs-body); font-weight: var(--fw-bold);
-    }
-    .section-head__num { font-variant-numeric: tabular-nums; min-width: 2ch; }
-
     .display-1, .display-2, .display-3 { font-weight: var(--fw-bold); text-wrap: balance; }
     .display-1 { font-size: var(--fs-display-1); line-height: var(--lh-display); letter-spacing: -0.04em; }
     .display-2 { font-size: var(--fs-display-2); line-height: 1.14; letter-spacing: -0.032em; }
@@ -207,19 +199,6 @@
       font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: -0.03em;
       text-decoration: none;
     }
-    .site-nav ol { display: flex; align-items: center; gap: clamp(16px, 2.2vw, 32px); }
-    .site-nav a {
-      display: inline-flex; align-items: center; gap: var(--space-2); min-height: 32px;
-      font-size: var(--fs-body); color: var(--color-text-secondary); text-decoration: none;
-      transition: color .15s ease;
-    }
-    .site-nav a:hover { color: var(--color-text-primary); }
-    .site-nav__num { font-size: var(--fs-small); color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; }
-    .site-nav a[aria-current="location"] {
-      color: var(--color-text-primary); font-weight: var(--fw-bold);
-      text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 8px;
-    }
-
     /* ── 버튼 (DesignSystem 4-3) ── */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -261,8 +240,9 @@
       height: 100%;
       padding: var(--space-5);
       background: var(--color-bg-white);
-      border: 1px solid var(--color-border-light);
+      border: 0;
       border-radius: var(--radius-1depth);
+      box-shadow: var(--shadow-card);
     }
     .mini-card > * { flex-shrink: 0; }
     .mini-card__meta { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
@@ -278,21 +258,13 @@
     .mini-card__foot {
       display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
       margin-top: auto; padding-top: var(--space-3);
-      border-top: 1px solid var(--color-border-light);
+      border-top: 0;
       font-size: var(--fs-body); color: var(--color-primary-sub);
     }
 
     /* ── 히어로 ── */
     .hero { padding-top: clamp(28px, 4vw, 64px); padding-bottom: clamp(64px, 7vw, 120px); }
-    .hero__meta {
-      display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); row-gap: var(--space-3);
-      padding-top: var(--space-3); border-top: 1px solid currentColor;
-      font-size: var(--fs-body); line-height: var(--lh-base); color: var(--color-text-secondary);
-    }
-    .hero__meta p { grid-column: span 3; }
-    .hero__meta p:first-child { color: var(--color-text-primary); font-weight: var(--fw-bold); }
-    .hero__meta p:last-child { text-align: right; }
-    .hero__title { margin-top: clamp(56px, 9vw, 144px); }
+    .hero__title { margin-top: clamp(40px, 6vw, 96px); }
     .hero__title .line { display: block; }
     .hero__title .line > span { display: block; }
     .hero__title .line:nth-child(2) { margin-left: calc((100% + var(--space-6)) / 12 * 3); color: var(--color-primary-sub); }
@@ -307,9 +279,7 @@
       align-items: end; margin-top: clamp(40px, 5vw, 72px);
     }
     .hero__lead { grid-column: 1 / span 5; }
-    .hero__actions { grid-column: 7 / span 4; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
-    .legend { grid-column: 11 / span 2; justify-self: end; display: grid; gap: var(--space-2); font-size: var(--fs-body); font-weight: var(--fw-bold); }
-    .legend li { display: flex; align-items: center; gap: var(--space-2); }
+    .hero__actions { grid-column: 7 / span 5; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 
     /* ── 흩어짐 → 모임 → 이어짐 (스크롤 장면) ── */
     .gather { background: var(--color-bg-primary-faint); padding-block: var(--section-y); }
@@ -340,13 +310,14 @@
     .window {
       display: flex; flex-direction: column; height: 100%; overflow: hidden;
       background: var(--color-bg-white);
-      border: 1px solid var(--color-border-light);
+      border: 0;
       border-radius: var(--radius-1depth);
+      box-shadow: var(--shadow-card);
     }
     .window__bar {
       display: flex; align-items: center; gap: var(--space-3);
       height: 40px; padding: 0 var(--space-4); flex: none;
-      border-bottom: 1px solid var(--color-border-light);
+      border-bottom: 0;
     }
     .window__title { font-size: var(--fs-body); font-weight: var(--fw-bold); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .window__body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3) var(--space-4); }
@@ -356,7 +327,7 @@
       font-size: var(--fs-body); line-height: var(--lh-base);
     }
     .bubble--user { align-self: flex-end; background: var(--color-bg-gray); }
-    .bubble--ai { align-self: flex-start; border: 1px solid var(--color-border-light); }
+    .bubble--ai { align-self: flex-start; border: 0; background: var(--color-bg-gray); }
 
     /* 스크롤 연동 모드: JS가 데스크톱 + 움직임 허용일 때만 켠다 */
     .gather--live { height: 320vh; padding-block: 0; }
@@ -376,7 +347,7 @@
     .gather--live .flow-item > .flow-item__window { display: flex; opacity: var(--win, 1); }
     .gather--live .flow-item__card { opacity: var(--card, 0); }
     .gather--live .flow-item:not(:first-child) { opacity: calc(1 - var(--select, 0) * .55); }
-    .gather--live[data-phase="resume"] .flow-item:first-child .mini-card { border: 2px solid var(--color-primary-sub); padding: calc(var(--space-5) - 1px); }
+    .gather--live[data-phase="resume"] .flow-item:first-child .mini-card { outline: 2px solid var(--color-primary-sub); outline-offset: 0; }
     .gather--live[data-phase="resume"] .flow-item:first-child .go-btn { background: var(--color-primary-main); color: var(--color-text-inverse); border-color: transparent; }
 
     /* ── 01 문제 ── */
@@ -407,7 +378,7 @@
     .summary-card {
       padding: var(--space-5);
       background: var(--color-bg-white);
-      border: 1px solid var(--color-border-light);
+      border: 0;
       border-radius: var(--radius-1depth);
     }
     .summary-card__meta { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
@@ -449,7 +420,7 @@
     .transcript {
       display: flex; flex-direction: column; height: 560px;
       background: var(--color-bg-white);
-      border: 1px solid var(--color-border-light);
+      border: 0;
       border-radius: var(--radius-1depth);
       overflow: hidden;
     }
@@ -518,7 +489,8 @@
     .segmented {
       display: inline-flex; gap: 2px; padding: 2px;
       background: var(--color-bg-white);
-      border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
+      border: 0; border-radius: var(--radius-2depth);
+      box-shadow: var(--shadow-card);
     }
     .segmented__btn {
       height: 36px; padding: 0 var(--space-4);
@@ -533,7 +505,7 @@
     .views-stage {
       position: relative; height: 600px; margin-top: var(--space-5);
       background: var(--color-bg-white);
-      border: 1px solid var(--color-border-light); border-radius: var(--radius-1depth);
+      border: 0; border-radius: var(--radius-1depth);
       overflow: hidden;
     }
     .mock-chat { position: absolute; inset: 0; display: flex; flex-direction: column; }
@@ -570,8 +542,9 @@
     .count { font-size: var(--fs-body); color: var(--color-text-status); font-weight: var(--fw-bold); }
     .mock-search {
       display: flex; align-items: center; height: 40px; padding: 0 var(--space-3); flex: none;
-      border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
+      border: 0; border-radius: var(--radius-2depth);
       font-size: var(--fs-body); color: var(--color-text-tertiary); background: var(--color-bg-white);
+      box-shadow: var(--shadow-card);
     }
     .mock-panel__list { display: grid; gap: var(--space-3); }
     .mock-workspace {
@@ -585,10 +558,11 @@
     .mock-filter .mock-search { width: 240px; }
     .chip {
       display: inline-flex; align-items: center; height: 32px; padding: 0 var(--space-3);
-      background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
+      background: var(--color-bg-white); border: 0; border-radius: var(--radius-2depth);
       font-size: var(--fs-body); color: var(--color-text-secondary);
+      box-shadow: var(--shadow-card);
     }
-    .chip--on { background: var(--color-primary-main); border-color: transparent; color: var(--color-text-inverse); font-weight: var(--fw-bold); }
+    .chip--on { background: var(--color-primary-main); color: var(--color-text-inverse); font-weight: var(--fw-bold); box-shadow: none; }
     .mock-filter .count { margin-left: auto; }
     .mock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-4); margin-top: var(--space-5); }
     .views-stage[data-view="workspace"] .mock-chat,
@@ -610,46 +584,11 @@
     .principle__rule strong { display: block; margin-bottom: var(--space-1); font-size: var(--fs-small); color: var(--color-text-inverse-secondary); }
 
     /* ── 06 검증 ── */
-    .verify { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); row-gap: var(--space-8); margin-top: clamp(40px, 5vw, 72px); align-items: start; }
-    .verify__demo { grid-column: 1 / span 7; }
-    .verify__compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-5); }
-    .compare {
-      padding: var(--space-5);
-      background: var(--color-bg-gray);
-      border-radius: var(--radius-1depth);
+    .verify__measures {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-6); margin-top: clamp(40px, 5vw, 72px);
     }
-    .compare__label { font-size: var(--fs-body); font-weight: var(--fw-bold); }
-    .compare__desc { margin-top: var(--space-1); font-size: var(--fs-body); color: var(--color-text-secondary); }
-    .window-stack { position: relative; height: 236px; margin-top: var(--space-5); }
-    .window-stack__item {
-      position: absolute; left: calc(var(--k) * 12px); top: calc(var(--k) * 22px);
-      width: calc(100% - 48px); height: 128px;
-      padding: var(--space-2) var(--space-3);
-      background: var(--color-bg-white);
-      border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
-      font-size: var(--fs-small); color: var(--color-text-secondary);
-      opacity: 0; transform: translateY(10px);
-      transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
-    }
-    .window-stack__item strong { color: var(--color-text-primary); }
-    .window-stack__title { margin-top: var(--space-2); font-size: var(--fs-body); color: var(--color-text-primary); }
-    .card-stack { display: grid; gap: var(--space-2); margin-top: var(--space-5); }
-    .card-stack__item {
-      display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
-      height: 38px; padding: 0 var(--space-3);
-      background: var(--color-bg-white);
-      border: 1px solid var(--color-border-light); border-radius: var(--radius-2depth);
-      font-size: var(--fs-body); font-weight: var(--fw-bold);
-      opacity: 0; transform: translateY(10px);
-      transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
-    }
-    .card-stack__item span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .card-stack__item .ai-label { flex: none; font-weight: var(--fw-regular); }
-    .window-stack__item.is-shown, .card-stack__item.is-shown { opacity: 1; transform: none; }
-    .card-stack__item:not(.is-shown) { display: none; }
-    .verify__measures { grid-column: 9 / span 4; }
     .measure { padding: var(--space-4) 0 var(--space-6); border-top: 1px solid currentColor; }
-    .measure + .measure { margin-top: var(--space-4); }
     .measure__label { font-size: var(--fs-body); font-weight: var(--fw-bold); color: var(--color-text-secondary); }
     .measure dt { margin-top: var(--space-4); }
     .measure dd { margin-top: var(--space-2); color: var(--color-text-secondary); line-height: var(--lh-reading); }
@@ -719,14 +658,9 @@
     .motion-ok .reveal.is-in { opacity: 1; transform: none; }
 
     @media (max-width: 1100px) {
-      .site-nav { display: none; }
       .hero__actions { grid-column: 1 / span 8; }
-      .legend { grid-column: 9 / span 4; }
     }
     @media (max-width: 960px) {
-      .hero__meta p { grid-column: span 6; }
-      .hero__meta p:nth-child(2n) { text-align: right; }
-      .hero__meta p:nth-child(3) { text-align: left; }
       .hero__title .line:nth-child(2) { margin-left: calc((100% + var(--space-6)) / 12 * 2); }
       .hero__lead { grid-column: 1 / -1; }
       .intro > h2, .intro > .lead { grid-column: 1 / -1; }
@@ -743,7 +677,7 @@
       .principle__num { grid-column: 1 / span 2; }
       .principle__term { grid-column: 3 / -1; }
       .principle__meaning, .principle__rule { grid-column: 3 / -1; }
-      .verify__demo, .verify__measures { grid-column: 1 / -1; }
+      .verify__measures { grid-template-columns: 1fr; }
       .outcomes__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .faq > h2, .faq__list { grid-column: 1 / -1; }
       .cta__title, .cta__side { grid-column: 1 / -1; }
@@ -753,14 +687,11 @@
       .mock-panel { width: min(420px, 70%); }
     }
     @media (max-width: 760px) {
-      .hero__meta { font-size: var(--fs-small); }
       .hero__title .line:nth-child(2) { margin-left: 0; }
       .hero__actions { grid-column: 1 / -1; }
-      .legend { grid-column: 1 / -1; justify-self: start; grid-auto-flow: column; gap: var(--space-4); }
       .gather__canvas { grid-template-columns: 1fr; }
       .feature { grid-template-columns: 40px minmax(0, 1fr); }
       .aux__row { grid-template-columns: 1fr; }
-      .verify__compare { grid-template-columns: 1fr; }
       .outcomes__list { grid-template-columns: 1fr; }
       .views-stage { height: 560px; }
       .mock-chat { display: none; }
@@ -783,16 +714,6 @@
 <header class="site-header" id="siteHeader">
   <div class="container site-header__inner">
     <a class="wordmark" href="#top">REFLOW</a>
-    <nav class="site-nav" aria-label="주요 메뉴">
-      <ol>
-        <li><a href="#problem"><span class="site-nav__num">01</span>문제</a></li>
-        <li><a href="#demo"><span class="site-nav__num">02</span>직접 해보기</a></li>
-        <li><a href="#features"><span class="site-nav__num">03</span>기능</a></li>
-        <li><a href="#views"><span class="site-nav__num">04</span>두 가지 보기</a></li>
-        <li><a href="#why"><span class="site-nav__num">05</span>근거</a></li>
-        <li><a href="#verify"><span class="site-nav__num">06</span>검증</a></li>
-      </ol>
-    </nav>
     <a class="btn btn--primary" href="prototype.html">프로토타입 열기</a>
   </div>
 </header>
@@ -801,13 +722,6 @@
   <!-- 히어로 -->
   <section class="hero" id="top" aria-labelledby="hero-title">
     <div class="container">
-      <div class="hero__meta">
-        <p>REFLOW<br />대화 작업대</p>
-        <p>시스템과 사용자 경험<br />7조 조별과제</p>
-        <p>ChatGPT · Claude<br />Gemini · Perplexity</p>
-        <p>RE + FLOW<br />끊어진 흐름을 다시 잇다</p>
-      </div>
-
       <h1 class="hero__title display-1" id="hero-title">
         <span class="line"><span>흩어진 AI 대화를</span></span>
         <span class="line"><span>다시 흐르게.</span></span>
@@ -819,11 +733,6 @@
           <a class="btn btn--primary btn--lg" href="prototype.html">프로토타입 열기</a>
           <a class="btn btn--text" href="#demo">직접 눌러 보기 ↓</a>
         </div>
-        <ul class="legend" aria-label="모든 카드의 구조" data-enter>
-          <li><span class="dot dot--confirmed" aria-hidden="true"></span>확정</li>
-          <li><span class="dot dot--pending" aria-hidden="true"></span>미정</li>
-          <li><span class="dot dot--next" aria-hidden="true"></span>다음 행동</li>
-        </ul>
       </div>
     </div>
   </section>
@@ -868,7 +777,6 @@
   <!-- 01 문제 -->
   <section class="section" id="problem" aria-labelledby="problem-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">01</span><span>문제</span></header>
       <h2 class="display-2 reveal" id="problem-title">AI 창이 늘수록,<br />어느 창에서 무슨 얘기를 했는지 잊습니다.</h2>
       <ol class="pain-list">
         <li class="pain reveal">
@@ -896,7 +804,6 @@
   <!-- 02 직접 해보기 -->
   <section class="section section--tint" id="demo" aria-labelledby="demo-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">02</span><span>직접 해보기</span></header>
       <div class="intro">
         <h2 class="display-2 reveal" id="demo-title">요약 한 줄을 누르면,<br />근거가 된 원문이 보입니다.</h2>
         <p class="lead reveal">카드는 AI가 쓴 요약입니다. 그래서 근거를 확인할 수 있어야 하고, 틀리면 직접 고칠 수 있어야 합니다.</p>
@@ -929,7 +836,6 @@
   <!-- 03 기능 -->
   <section class="section" id="features" aria-labelledby="features-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">03</span><span>기능</span></header>
       <h2 class="display-2 reveal" id="features-title">네 가지로 충분합니다.</h2>
       <ol class="feature-list">
         <li class="feature reveal">
@@ -998,7 +904,6 @@
   <!-- 04 두 가지 보기 -->
   <section class="section section--tint" id="views" aria-labelledby="views-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">04</span><span>두 가지 보기</span></header>
       <div class="intro">
         <h2 class="display-2 reveal" id="views-title">채팅하다 잠깐 열고,<br />필요하면 한 번에 펼칩니다.</h2>
         <p class="lead reveal">지금 하던 대화를 두고 다른 카드를 확인할 때는 패널을, 모든 카드를 정리할 때는 전체 작업대를 씁니다.</p>
@@ -1042,7 +947,6 @@
   <!-- 05 근거 -->
   <section class="section section--inverse" id="why" aria-labelledby="why-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">05</span><span>근거</span></header>
       <div class="intro">
         <h2 class="display-2 reveal" id="why-title">기억은 카드에 맡기고,<br />머리는 다음 행동에.</h2>
         <p class="lead reveal">작업기억의 한계, 외재적 인지부하, 인지적 오프로딩. 네 가지 개념을 화면에서 지키는 규칙으로 바꿨습니다.</p>
@@ -1079,32 +983,11 @@
   <!-- 06 검증 -->
   <section class="section" id="verify" aria-labelledby="verify-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">06</span><span>검증</span></header>
       <div class="intro">
-        <h2 class="display-2 reveal" id="verify-title">창이 1개, 3개, 5개일 때를<br />비교합니다.</h2>
-        <p class="lead reveal">같은 과제를 일반 화면과 카드 화면에서 해 보고, 창이 늘어날 때 두 가지가 어떻게 달라지는지 잽니다.</p>
+        <h2 class="display-2 reveal" id="verify-title">두 가지로<br />차이를 봅니다.</h2>
+        <p class="lead reveal">같은 과제를 일반 화면과 카드 화면에서 해 보고, 아래 두 가지가 어떻게 다른지 봅니다.</p>
       </div>
-      <div class="verify">
-        <div class="verify__demo reveal">
-          <div class="segmented" role="group" aria-label="창 개수 조건">
-            <button class="segmented__btn" type="button" data-windows="1" aria-pressed="false">창 1개</button>
-            <button class="segmented__btn" type="button" data-windows="3" aria-pressed="true">창 3개</button>
-            <button class="segmented__btn" type="button" data-windows="5" aria-pressed="false">창 5개</button>
-          </div>
-          <div class="verify__compare" aria-hidden="true">
-            <div class="compare">
-              <p class="compare__label">일반 화면</p>
-              <p class="compare__desc">창을 하나씩 열어 찾습니다</p>
-              <div class="window-stack" id="windowStack"></div>
-            </div>
-            <div class="compare">
-              <p class="compare__label">카드 화면</p>
-              <p class="compare__desc">카드 목록에서 찾습니다</p>
-              <div class="card-stack" id="cardStack"></div>
-            </div>
-          </div>
-        </div>
-        <dl class="verify__measures">
+      <dl class="verify__measures">
           <div class="measure reveal">
             <p class="measure__label">측정 지표 1</p>
             <dt class="display-3">이전 답을 찾는 시간</dt>
@@ -1116,13 +999,12 @@
             <dd>답이 없는 다른 AI 창에 먼저 물어본 횟수</dd>
           </div>
         </dl>
-      </div>
 
       <div class="outcomes">
         <h3 class="outcomes__title reveal">기대 효과</h3>
         <ul class="outcomes__list">
           <li class="outcome reveal"><h3>구체적 해법</h3><p>카드 요약, 근거 보기, 원본으로 이동으로 여러 AI 창이라는 지금의 문제를 풉니다.</p></li>
-          <li class="outcome reveal"><h3>실험 용이성</h3><p>창 개수별 비교 실험을 설계하기 쉽습니다.</p></li>
+          <li class="outcome reveal"><h3>실험 용이성</h3><p>일반 화면과 카드 화면의 차이를 두 지표로 확인하기 쉽습니다.</p></li>
           <li class="outcome reveal"><h3>시장성</h3><p>AI 사용이 늘수록 대화 관리 수요도 커집니다.</p></li>
           <li class="outcome reveal"><h3>확장 가능성</h3><p>플랫폼 내 기능, 브라우저 확장 프로그램, 구독 모델로 발전할 수 있습니다.</p></li>
         </ul>
@@ -1131,9 +1013,8 @@
   </section>
 
   <!-- 07 자주 묻는 질문 -->
-  <section class="section section--tint" id="faq" aria-labelledby="faq-title" data-nav="verify">
+  <section class="section section--tint" id="faq" aria-labelledby="faq-title">
     <div class="container">
-      <header class="section-head"><span class="section-head__num">07</span><span>자주 묻는 질문</span></header>
       <div class="faq">
         <h2 class="display-2 reveal" id="faq-title">궁금한 점이<br />있나요</h2>
         <div class="faq__list reveal">
@@ -1275,14 +1156,6 @@
     ]
   };
 
-  var VERIFY_WINDOWS = [
-    { ai: "ChatGPT", title: "심리학 과제 주제 정하기" },
-    { ai: "Claude", title: "조별 발표 자료 마감 맞추기" },
-    { ai: "Gemini", title: "가족여행 숙소 조건 정리" },
-    { ai: "Perplexity", title: "경쟁 서비스 자료 조사" },
-    { ai: "Claude", title: "분기 보고서 첫 장 다듬기" }
-  ];
-
   var SECTIONS = [
     { key: "confirmed", label: "확정", dot: "dot--confirmed" },
     { key: "pending", label: "미정", dot: "dot--pending" },
@@ -1307,8 +1180,7 @@
       selected: null,
       editing: false,
       resumed: false
-    },
-    windows: 3
+    }
   };
 
   /* ================================================================
@@ -1417,31 +1289,6 @@
   function messageHtml(m) {
     return '<li class="message" data-id="' + m.id + '"><span class="message__role">' + (m.role === "user" ? "나" : DEMO_CARD.ai) + "</span>" +
       '<p class="message__text">' + escapeHtml(m.text) + "</p></li>";
-  }
-
-  function renderVerify() {
-    var stack = document.getElementById("windowStack");
-    var cards = document.getElementById("cardStack");
-    if (!stack || !cards) return;
-    stack.innerHTML = VERIFY_WINDOWS.map(function (w, i) {
-      return '<div class="window-stack__item" style="--k:' + i + '"><strong>' + w.ai + "</strong> · 창 " + (i + 1) +
-        '<p class="window-stack__title">' + escapeHtml(w.title) + "</p></div>";
-    }).join("");
-    cards.innerHTML = VERIFY_WINDOWS.map(function (w) {
-      return '<div class="card-stack__item"><span>' + escapeHtml(w.title) + '</span><span class="ai-label">' + w.ai + "</span></div>";
-    }).join("");
-    updateVerify();
-  }
-
-  function updateVerify() {
-    var n = state.windows;
-    document.querySelectorAll(".window-stack__item, .card-stack__item").forEach(function (el) {
-      var index = Array.prototype.indexOf.call(el.parentNode.children, el);
-      el.classList.toggle("is-shown", index < n);
-    });
-    document.querySelectorAll("[data-windows]").forEach(function (btn) {
-      btn.setAttribute("aria-pressed", String(Number(btn.getAttribute("data-windows")) === n));
-    });
   }
 
   /* ================================================================
@@ -1592,34 +1439,11 @@
     apply("panel");
   }
 
-  function bindVerify() {
-    document.querySelectorAll("[data-windows]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        state.windows = Number(btn.getAttribute("data-windows"));
-        updateVerify();
-      });
-    });
-  }
-
   function bindHeader() {
     var header = document.getElementById("siteHeader");
-    var links = document.querySelectorAll(".site-nav a");
     var onScroll = function () { header.setAttribute("data-scrolled", String(window.scrollY > 8)); };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-
-    if (!("IntersectionObserver" in window)) return;
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        var id = entry.target.getAttribute("data-nav") || entry.target.id;
-        links.forEach(function (a) {
-          if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "location");
-          else a.removeAttribute("aria-current");
-        });
-      });
-    }, { rootMargin: "-45% 0px -50% 0px" });
-    document.querySelectorAll("main > section").forEach(function (s) { spy.observe(s); });
   }
 
   function bindReveal() {
@@ -1730,10 +1554,8 @@
   renderViews();
   renderDemoCard();
   renderTranscript();
-  renderVerify();
   bindDemo();
   bindViews();
-  bindVerify();
   bindHeader();
   bindReveal();
   bindGather();

@@ -60,6 +60,8 @@
 
   /* Elevation — 채팅 위 패널, 모달에만 */
   --shadow-overlay: 0 8px 24px rgba(36, 28, 75, 0.12);
+  /* 카드용 (제안값 — DesignSystem·Figma 미등록) */
+  --shadow-card: 0 4px 16px rgba(36, 28, 75, 0.08);
 
   /* Focus (DesignSystem 2-3) */
   --focus-ring: 2px solid var(--color-primary-sub);
@@ -108,6 +110,7 @@ html[data-theme="dark"] {
   --color-status-error: #e07070;
   --color-status-error-bg: #3a1818;
   --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.28);
   --focus-ring: 2px solid var(--indigo-400);
 }
 
@@ -502,8 +505,8 @@ body[data-view="panel"] .filter-bar__count {
 }
 /* 테마 태그: Body Small Bold, AI 라벨과 구분만 테두리로 (브랜드 색 금지) */
 .theme-tag {
-  border: 1px solid var(--color-border-default);
-  background: var(--color-bg-white);
+  border: 0;
+  background: var(--color-bg-gray);
   color: var(--color-text-secondary);
 }
 
@@ -512,8 +515,9 @@ body[data-view="panel"] .filter-bar__count {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
   padding: var(--space-4);
   background: var(--color-bg-white);
-  border: 1px solid var(--color-border-light);
+  border: 0;
   border-radius: var(--radius-1depth);
+  box-shadow: var(--shadow-card);
 }
 .filter-bar__search { position: relative; flex: 1 1 240px; min-width: 0; }
 .filter-bar__search-icon {
@@ -640,16 +644,17 @@ html[data-theme="dark"] .chat__switch .tabs-indicator--pill {
   min-width: 0;
   padding: var(--space-5);
   background: var(--color-bg-white);
-  border: 1px solid var(--color-border-light);
+  border: 0;
   border-radius: var(--radius-1depth);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
 }
-.summary-card:hover { border-color: var(--color-border-primary); }
-/* 선택됨: 테두리가 2px이 되는 만큼 안쪽 여백을 1px 줄여 내용이 밀리지 않게 한다 */
+.summary-card:hover { box-shadow: 0 6px 20px rgba(36, 28, 75, 0.12); }
+html[data-theme="dark"] .summary-card:hover { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); }
 .summary-card--selected,
 .summary-card--selected:hover {
-  padding: calc(var(--space-5) - 1px);
-  border: 2px solid var(--color-primary-sub);
+  outline: 2px solid var(--color-primary-sub);
+  outline-offset: 0;
 }
 .summary-card__head { display: grid; gap: var(--space-1); }
 .summary-card__meta {
@@ -700,8 +705,9 @@ html[data-theme="dark"] .chat__switch .tabs-indicator--pill {
   display: grid; justify-items: center; gap: var(--space-2);
   padding: var(--space-8) var(--space-5);
   background: var(--color-bg-white);
-  border: 1px solid var(--color-border-light);
+  border: 0;
   border-radius: var(--radius-1depth);
+  box-shadow: var(--shadow-card);
   text-align: center;
 }
 .empty-state__title { font-size: var(--fs-h3); font-weight: var(--fw-bold); }
@@ -847,21 +853,17 @@ html[data-modal-open] .chat__thread {
 }
 .evidence__bubble {
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border-light);
+  border: 0;
   border-radius: var(--radius-1depth);
   background: var(--color-bg-white);
+  box-shadow: var(--shadow-card);
   white-space: pre-wrap;
   transition:
     background-color var(--duration-ui) ease,
-    border-color var(--duration-ui) ease,
     box-shadow var(--duration-ui) ease;
-}
-.evidence__message--user .evidence__bubble {
-  border-color: transparent;
 }
 .evidence__message--active .evidence__bubble {
   background: var(--color-bg-primary-subtle);
-  border-color: var(--color-border-primary);
   box-shadow: 0 0 0 2px var(--color-border-primary);
 }
 .evidence__meta {
