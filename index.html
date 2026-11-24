@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>REFLOW — 대화 작업대</title>
   <meta name="description" content="여러 AI에 흩어진 대화를 테마별 카드로 모아, 어디까지 정했는지 보고 하던 대화로 바로 돌아가는 REFLOW" />
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="alternate icon" href="favicon.png" type="image/png" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' ry='4' fill='%23241C4B'/%3E%3Cpath fill='%23FFFFFF' d='M10.2 8.5h6.1c3.05 0 5.05 1.7 5.05 4.35 0 2.15-1.2 3.55-3.15 4.05l3.55 6.6h-3.55l-3.25-6.15h-1.65v6.15H10.2V8.5zm3.1 2.45v4.2h2.45c1.55 0 2.45-.8 2.45-2.1s-.9-2.1-2.45-2.1H13.3z'/%3E%3C/svg%3E" type="image/svg+xml">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <script>
     (function () {
@@ -51,6 +50,7 @@
       --color-bg-white: var(--gray-0);
       --color-bg-gray: var(--gray-100);
       --color-bg-primary-subtle: var(--indigo-100);
+      --color-bg-primary-faint: var(--indigo-50);
       --color-status-success: var(--green-700);
       --color-status-success-bg: var(--green-50);
       --color-status-warning: var(--amber-700);
@@ -72,12 +72,18 @@
 
       /* Focus */
       --focus-ring: 2px solid var(--color-primary-sub);
+      --focus-ring-offset: 2px;
+
+      /* Motion (prototype.html과 같은 값) */
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --duration-press: 140ms;
+      --duration-ui: 200ms;
 
       /* Typography */
       --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
       --fs-h1: 20px; --fs-h2: 18px; --fs-h3: 16px; --fs-body: 14px; --fs-small: 12px;
       --fw-regular: 400; --fw-bold: 700;
-      --lh-base: 1.4; --lh-button: 1;
+      --lh-base: 1.4; --lh-button: 1; --lh-reading: 1.6;
 
       /* ── 랜딩 전용 (제안값 — DesignSystem·Figma 미등록) ──
          제품 화면 타이포(최대 20px)로는 랜딩 제목을 만들 수 없어 따로 둔다. */
@@ -90,12 +96,10 @@
       --fs-lead: clamp(1.0625rem, 0.98rem + 0.4vw, 1.3125rem);
       --fs-body-lg: 16px;
       --lh-display: 1.08;
-      --lh-reading: 1.6;
       --header-h: 64px;
       --gutter: clamp(20px, 4vw, 56px);
       --content-max: 1240px;
       --section-y: clamp(88px, 4.5rem + 5vw, 168px);
-      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     /* ==================================================================
@@ -124,7 +128,7 @@
     fieldset { padding: 0; border: 0; min-width: 0; }
     a { color: inherit; }
     button, input { font: inherit; color: inherit; }
-    :focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+    :focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-ring-offset); }
     ::selection { background: var(--color-bg-primary-subtle); color: var(--color-text-primary); }
     .sr-only {
       position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -153,7 +157,7 @@
       padding-inline: var(--gutter);
     }
     .section { padding-block: var(--section-y); }
-    .section--gray { background: var(--color-bg-gray); }
+    .section--tint { background: var(--color-bg-primary-faint); }
     .section--inverse { background: var(--color-bg-inverse); color: var(--color-text-inverse); }
     .section--inverse :focus-visible { outline-color: var(--color-text-inverse); }
 
@@ -165,7 +169,8 @@
       margin-bottom: clamp(32px, 4vw, 64px);
       font-size: var(--fs-body); font-weight: var(--fw-bold);
     }
-    .section-head__num { font-variant-numeric: tabular-nums; min-width: 2ch; }
+    .section-head__num { font-variant-numeric: tabular-nums; min-width: 2ch; color: var(--color-primary-sub); }
+    .section--inverse .section-head__num { color: var(--color-text-inverse-secondary); }
     .section-head__aside { margin-left: auto; font-weight: var(--fw-regular); color: var(--color-text-secondary); }
     .section--inverse .section-head__aside { color: var(--color-text-inverse-secondary); }
 
@@ -212,7 +217,7 @@
       transition: color .15s ease;
     }
     .site-nav a:hover { color: var(--color-text-primary); }
-    .site-nav__num { font-size: var(--fs-small); color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; }
+    .site-nav__num { font-size: var(--fs-small); color: var(--color-primary-sub); font-variant-numeric: tabular-nums; }
     .site-nav a[aria-current="location"] {
       color: var(--color-text-primary); font-weight: var(--fw-bold);
       text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 8px;
@@ -225,7 +230,7 @@
       border: 1px solid transparent; border-radius: var(--radius-2depth);
       font-family: inherit; font-size: var(--fs-body); font-weight: var(--fw-bold); line-height: var(--lh-button);
       text-decoration: none; white-space: nowrap; cursor: pointer;
-      transition: opacity .15s ease, background-color .15s ease;
+      transition: opacity var(--duration-press) ease, background-color var(--duration-press) ease;
     }
     .btn--primary { background: var(--color-primary-main); color: var(--color-text-inverse); }
     .btn--primary:hover { opacity: .9; }
@@ -292,7 +297,7 @@
     .hero__title { margin-top: clamp(56px, 9vw, 144px); }
     .hero__title .line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
     .hero__title .line > span { display: block; }
-    .hero__title .line:nth-child(2) { margin-left: calc((100% + var(--space-6)) / 12 * 3); }
+    .hero__title .line:nth-child(2) { margin-left: calc((100% + var(--space-6)) / 12 * 3); color: var(--color-primary-sub); }
     .motion-ok .hero__title .line > span { animation: rise 1s var(--ease-out) both; }
     .motion-ok .hero__title .line:nth-child(2) > span { animation-delay: .09s; }
     .motion-ok .hero [data-enter] { animation: fade-up .8s var(--ease-out) .35s both; }
@@ -308,7 +313,7 @@
     .legend li { display: flex; align-items: center; gap: var(--space-2); }
 
     /* ── 흩어짐 → 모임 → 이어짐 (스크롤 장면) ── */
-    .gather { background: var(--color-bg-gray); padding-block: var(--section-y); }
+    .gather { background: var(--color-bg-primary-faint); padding-block: var(--section-y); }
     .gather__layout {
       display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); row-gap: var(--space-8);
       align-items: center; width: 100%;
@@ -363,6 +368,7 @@
     }
     .gather--live .gather-step { color: var(--color-text-secondary); }
     .gather--live .gather-step.is-active { color: var(--color-text-primary); border-top-color: currentColor; }
+    .gather--live .gather-step.is-active .gather-step__num { color: var(--color-primary-sub); }
     .gather--live .gather-step__desc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease-out); }
     .gather--live .gather-step.is-active .gather-step__desc { grid-template-rows: 1fr; }
     .gather--live .gather-step__desc > p { overflow: hidden; min-height: 0; }
@@ -381,7 +387,7 @@
       margin-top: clamp(48px, 6vw, 96px);
     }
     .pain { padding-top: var(--space-4); border-top: 1px solid currentColor; }
-    .pain__num { font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
+    .pain__num { font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-primary-sub); }
     .pain__title { margin-top: clamp(24px, 3vw, 48px); }
     .pain__desc { margin-top: var(--space-3); color: var(--color-text-secondary); line-height: var(--lh-reading); max-width: 24em; }
     .problem-note {
@@ -439,7 +445,7 @@
     }
     .field::placeholder { color: var(--color-text-tertiary); }
     .field:focus { border-color: var(--color-primary-sub); }
-    .field:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+    .field:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-ring-offset); }
     .edit-form__actions { display: flex; justify-content: flex-end; gap: var(--space-2); padding-top: var(--space-4); border-top: 1px solid var(--color-border-light); }
 
     .transcript {
@@ -488,7 +494,7 @@
     }
     .feature:nth-child(odd) { border-right: 1px solid var(--color-border-default); }
     .feature:nth-child(even) { padding-left: var(--space-7); padding-right: 0; }
-    .feature__num { padding-top: .5em; font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
+    .feature__num { padding-top: .5em; font-size: var(--fs-body); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-primary-sub); }
     .feature__desc { margin-top: var(--space-3); color: var(--color-text-secondary); line-height: var(--lh-reading); max-width: 26em; }
     .feature__specimen { margin-top: var(--space-6); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); font-size: var(--fs-body); font-weight: var(--fw-bold); }
     .feature__specimen .legend-inline { display: inline-flex; align-items: center; gap: var(--space-2); }
@@ -693,7 +699,7 @@
       line-height: var(--lh-reading);
     }
     .try__steps li:last-child { border-bottom: 1px solid var(--color-border-light); }
-    .try__steps li::before { content: counter(step, decimal-leading-zero); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
+    .try__steps li::before { content: counter(step, decimal-leading-zero); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; color: var(--color-primary-sub); }
     .try__note { grid-column: 4 / span 9; margin-top: var(--space-4); font-size: var(--fs-body); color: var(--color-text-secondary); line-height: var(--lh-reading); }
 
     .site-footer { padding-bottom: var(--space-7); overflow: hidden; }
@@ -748,7 +754,7 @@
       .mock-chat__composer { width: auto; }
       .mock-panel { width: min(420px, 70%); }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 760px) {
       .hero__meta { font-size: var(--fs-small); }
       .hero__title .line:nth-child(2) { margin-left: 0; }
       .hero__actions { grid-column: 1 / -1; }
@@ -786,7 +792,7 @@
         <li><a href="#verify"><span class="site-nav__num">06</span>검증</a></li>
       </ol>
     </nav>
-    <a class="btn btn--primary" href="REFLOW_7조_프로토타입.html">프로토타입 열기</a>
+    <a class="btn btn--primary" href="prototype.html">프로토타입 열기</a>
   </div>
 </header>
 
@@ -809,7 +815,7 @@
       <div class="hero__foot">
         <p class="hero__lead lead" data-enter>여러 AI에 나뉜 대화를 테마별 카드로 모읍니다. 어디까지 정했는지 보고, 하던 대화로 바로 돌아가세요.</p>
         <div class="hero__actions" data-enter>
-          <a class="btn btn--primary btn--lg" href="REFLOW_7조_프로토타입.html">프로토타입 열기</a>
+          <a class="btn btn--primary btn--lg" href="prototype.html">프로토타입 열기</a>
           <a class="btn btn--text" href="#demo">직접 눌러 보기 ↓</a>
         </div>
         <ul class="legend" aria-label="모든 카드의 구조" data-enter>
@@ -887,7 +893,7 @@
   </section>
 
   <!-- 02 직접 해보기 -->
-  <section class="section section--gray" id="demo" aria-labelledby="demo-title">
+  <section class="section section--tint" id="demo" aria-labelledby="demo-title">
     <div class="container">
       <header class="section-head"><span class="section-head__num">02</span><span>직접 해보기</span><span class="section-head__aside">근거 보기 · 요약 수정 · 바로 가기</span></header>
       <div class="intro">
@@ -989,7 +995,7 @@
   </section>
 
   <!-- 04 두 가지 보기 -->
-  <section class="section section--gray" id="views" aria-labelledby="views-title">
+  <section class="section section--tint" id="views" aria-labelledby="views-title">
     <div class="container">
       <header class="section-head"><span class="section-head__num">04</span><span>두 가지 보기</span><span class="section-head__aside">패널 · 전체 작업대</span></header>
       <div class="intro">
@@ -1124,7 +1130,7 @@
   </section>
 
   <!-- 07 자주 묻는 질문 -->
-  <section class="section section--gray" id="faq" aria-labelledby="faq-title" data-nav="verify">
+  <section class="section section--tint" id="faq" aria-labelledby="faq-title" data-nav="verify">
     <div class="container">
       <header class="section-head"><span class="section-head__num">07</span><span>자주 묻는 질문</span></header>
       <div class="faq">
@@ -1159,8 +1165,8 @@
         <div class="cta__side reveal">
           <p class="lead">한눈에 알아보고, 근거를 확인해 고치고, 바로 가기 한 번으로 하던 일로 돌아가세요.</p>
           <div class="cta__actions">
-            <a class="btn btn--primary btn--lg" href="REFLOW_7조_프로토타입.html">프로토타입 열기</a>
-            <a class="btn btn--secondary btn--lg" href="REFLOW_7조_프로토타입.html?view=workspace">전체 작업대로 열기</a>
+            <a class="btn btn--primary btn--lg" href="prototype.html">프로토타입 열기</a>
+            <a class="btn btn--secondary btn--lg" href="prototype.html?view=workspace">전체 작업대로 열기</a>
           </div>
         </div>
       </div>
@@ -1196,7 +1202,7 @@
   "use strict";
 
   /* ================================================================
-     1) 더미 데이터 — 프로토타입(REFLOW_7조_프로토타입.html)과 같은 카드
+     1) 더미 데이터 — 프로토타입(prototype.html)과 같은 카드
      ================================================================ */
   var STATUS_LABELS = { draft: "요약 초안", check: "확인 필요", edited: "사용자 수정" };
 

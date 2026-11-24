@@ -48,7 +48,8 @@ AI 채팅 중 REFLOW 열기 → 카드 찾기(검색·AI 필터·정렬) → 카
 ```
 
 ### 산출물과 검증
-- 시연용 프로토타입: `REFLOW_7조_프로토타입.html` — **싱글 HTML 1개**, 교수님·원우가 직접 클릭해서 써볼 수 있어야 한다.
+- 시연용 프로토타입: `prototype.html` — **싱글 HTML 1개**, 교수님·원우가 직접 클릭해서 써볼 수 있어야 한다.
+- 랜딩페이지: `index.html` — 서비스 소개와 프로토타입 바로 가기. 배포 주소의 첫 화면(`/`)이 된다.
 - 검증 설계: 창 1개 · 3개 · 5개 조건에서 **일반 화면 vs 카드 화면** 비교.
   측정 지표는 ⏱ 이전 답을 찾는 시간, ❌ 잘못된 창에 질문한 횟수.
 - 실험용 측정 기능(타이머, 클릭 기록 등)은 **요청이 있을 때만** 추가한다.
@@ -68,7 +69,7 @@ AI 채팅 중 REFLOW 열기 → 카드 찾기(검색·AI 필터·정렬) → 카
 | Figma 변수 | CSS 변수 | 참조 | HEX | 용도 | 주의 |
 |---|---|---|---|---|---|
 | primary/main | `--color-primary-main` | indigo-900 | #241C4B | 헤더, 주요 버튼, 선택된 필터 칩 | 메인 컬러 |
-| primary/sub | `--color-primary-sub` | indigo-600 | #554A99 | 링크, 포커스 링, 선택된 카드 테두리 | 흰 배경 대비 7.4:1 |
+| primary/sub | `--color-primary-sub` | indigo-600 | #554A99 | 링크, 포커스 링, 선택된 카드 테두리, 작은 강조 텍스트(번호·활성 단계·랜딩 제목 강조) | 흰 배경 7.4:1, bg/primary-faint 위 6.9:1 |
 | primary/light | `--color-primary-light` | indigo-400 | #948DD9 | 보조 그래픽 요소 | **텍스트 금지** (대비 2.97:1) |
 | primary/point | `--color-primary-point` | ochre-500 | #E4A339 | '미정' 표시점 | **텍스트 금지**, 다른 곳에 쓰지 않음 |
 | text/primary | `--color-text-primary` | gray-900 | #1A1924 | 제목, 본문 | |
@@ -83,6 +84,7 @@ AI 채팅 중 REFLOW 열기 → 카드 찾기(검색·AI 필터·정렬) → 카
 | bg/white | `--color-bg-white` | gray-0 | #FFFFFF | 카드, 패널 | |
 | bg/gray | `--color-bg-gray` | gray-100 | #F2F2F6 | 페이지 배경, 섹션 박스 | |
 | bg/primary-subtle | `--color-bg-primary-subtle` | indigo-100 | #EBEBFD | 근거 하이라이트, '사용자 수정' 배지 배경 | |
+| bg/primary-faint | `--color-bg-primary-faint` | indigo-50 | #F6F6FF | 넓은 면 배경(랜딩 섹션 띠). 화면이 무채색으로 가라앉지 않게 브랜드 색을 아주 옅게 깐다 | **Figma 미등록**. text/tertiary 금지(4.43:1) |
 | status/success | `--color-status-success` | green-700 | #1E7546 | 성공 메시지 | |
 | status/success-bg | `--color-status-success-bg` | green-50 | #E3F8E9 | 성공 배경 | |
 | status/warning | `--color-status-warning` | amber-700 | #9D580C | '확인 필요' 텍스트 | |
@@ -99,7 +101,7 @@ AI 채팅 중 REFLOW 열기 → 카드 찾기(검색·AI 필터·정렬) → 카
 | Radius | `--radius-flag` | 4px | 작은 배지·태그 | 등록됨 |
 | Spacing | `--space-1` ~ `--space-8` | 4 / 8 / 12 / 16 / 20 / 24 / 32 / 48px | 여백·간격 | **미등록 (제안값)** |
 | Shadow | `--shadow-overlay` | 0 8px 24px rgba(36, 28, 75, 0.12) | **채팅 위 패널, 모달에만** | **미등록 (제안값)** |
-| Focus | `--focus-ring` | 2px solid var(--color-primary-sub), offset 2px | 키보드 포커스 | 미등록 |
+| Focus | `--focus-ring` / `--focus-ring-offset` | 2px solid var(--color-primary-sub) / 2px | 키보드 포커스 | 미등록 (코드는 2-5에 포함) |
 
 - 원형(`border-radius: 50%`)은 상태 표시점(dot)에만 쓴다.
 - 8px보다 큰 radius, pill 형태 버튼은 쓰지 않는다.
@@ -117,12 +119,14 @@ fallback: `-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans 
 | Body | Regular 400 | 14px | 1.4 | 본문, 요약 항목 |
 | Body Link | Regular 400 + underline | 14px | 1.4 | 링크 (`--color-primary-sub`) |
 | Body Bold | Bold 700 | 14px | 1.4 | 섹션 라벨 (확정·미정·다음 행동) |
+| Body Reading | Regular 400 | 14px | **1.6** | 여러 줄로 읽는 문단 (원문 대화, 설명). **Figma 미등록** |
 | Body Small | Regular 400 | 12px | 1.4 | 메타 정보 (AI 이름, 수정 시각) |
 | Body Small Bold | Bold 700 | 12px | 1.4 | 배지, 태그 |
 | Button Name | Bold 700 | 14px | 1.0 | 버튼 |
 
 - 굵기는 Regular 400, Bold 700 두 가지만 쓴다.
 - 12px은 메타 정보와 배지에만 쓴다. 읽어야 하는 문장에 쓰지 않는다.
+- 행간 1.4는 한 줄짜리 UI(버튼, 라벨, 카드 항목)용이다. 세 줄 넘게 이어지는 한글 문단은 `--lh-reading`(1.6)을 쓴다.
 - 글자 크기를 바꾸려면 **Figma Typography를 먼저 바꾸고** 이 표를 갱신한다. 코드에서만 따로 키우지 않는다.
 
 ### 2-5. `:root` 기준 코드 (프로토타입 `<style>` 맨 위에 그대로 둔다)
@@ -158,6 +162,7 @@ fallback: `-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans 
   --color-bg-white: var(--gray-0);
   --color-bg-gray: var(--gray-100);
   --color-bg-primary-subtle: var(--indigo-100);
+  --color-bg-primary-faint: var(--indigo-50);
   --color-status-success: var(--green-700);
   --color-status-success-bg: var(--green-50);
   --color-status-warning: var(--amber-700);
@@ -177,13 +182,81 @@ fallback: `-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans 
   /* Elevation — 채팅 위 패널, 모달에만 */
   --shadow-overlay: 0 8px 24px rgba(36, 28, 75, 0.12);
 
+  /* Focus */
+  --focus-ring: 2px solid var(--color-primary-sub);
+  --focus-ring-offset: 2px;
+
+  /* Motion (2-6) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-press: 140ms;
+  --duration-ui: 200ms;
+  --duration-modal: 250ms;
+  --duration-drawer: 320ms;
+  --duration-toast: 400ms;
+
   /* Typography */
   --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --fs-h1: 20px; --fs-h2: 18px; --fs-h3: 16px; --fs-body: 14px; --fs-small: 12px;
   --fw-regular: 400; --fw-bold: 700;
-  --lh-base: 1.4; --lh-button: 1;
+  --lh-base: 1.4; --lh-button: 1; --lh-reading: 1.6;
 }
 ```
+
+### 2-6. 모션 (`prototype.html` 구현 기준)
+
+| 토큰 | 값 | 쓰는 곳 |
+|---|---|---|
+| `--duration-press` | 140ms | 버튼·칩 누름, hover |
+| `--duration-ui` | 200ms | 테두리·배경 등 작은 상태 변화 |
+| `--duration-modal` | 250ms | 모달 열고 닫기 |
+| `--duration-drawer` | 320ms | 채팅 위 패널 열고 닫기 |
+| `--duration-toast` | 400ms | 토스트 |
+| `--ease-out` | cubic-bezier(0.23, 1, 0.32, 1) | 기본. 나타나는 움직임 |
+| `--ease-in-out` | cubic-bezier(0.77, 0, 0.175, 1) | 자리를 옮기는 움직임 |
+| `--ease-drawer` | cubic-bezier(0.32, 0.72, 0, 1) | 패널 |
+
+- 움직임은 **상태가 바뀌었다는 것을 알릴 때만** 쓴다. 장식용 반복 애니메이션은 쓰지 않는다.
+- 카드 hover에 떠오르기(translate, scale, shadow)는 쓰지 않는다. (4-1)
+- 스크롤 등장 효과는 opacity와 16px 이내 이동만 쓴다.
+- `prefers-reduced-motion: reduce`에서는 전환을 끄거나 opacity만 남긴다. 스크롤 연동 장면은 최종 상태를 정적으로 보여준다.
+
+### 2-7. 다크 모드 (`prototype.html` 구현 기준)
+
+`html[data-theme="dark"]`에서 **시맨틱 토큰만 다시 매핑**하고 프리미티브는 그대로 둔다. 컴포넌트 CSS는 바꾸지 않는다.
+
+| 시맨틱 | 라이트 | 다크 | 주의 |
+|---|---|---|---|
+| primary/main | indigo-900 | indigo-300 | 위의 글자는 text/inverse(indigo-950), 10.0:1 |
+| primary/sub | indigo-600 | indigo-400 | |
+| primary/point | ochre-500 | ochre-300 | 여전히 '미정' 표시점에만 |
+| text/primary · secondary | gray-900 · gray-600 | gray-50 · gray-400 | secondary 7.0:1 |
+| text/tertiary | gray-500 | gray-500 | **다크 배경 대비 3.65:1로 AA 미달 → 다크에서는 읽어야 하는 텍스트에 쓰지 않는다** |
+| text/status | indigo-500 | indigo-400 | 5.85:1 |
+| bg/white · gray | gray-0 · gray-100 | gray-900 · gray-950 | |
+| bg/primary-subtle | indigo-100 | indigo-950 | |
+| border/default · light · primary | gray-300 · 200 · indigo-200 | gray-700 · 800 · indigo-700 | |
+| shadow/overlay | rgba(36,28,75,.12) | rgba(0,0,0,.45) | |
+
+- **정리할 것:** 다크의 상태색 6개(success · warning · error와 각 배경)는 지금 HEX를 직접 쓴다. 2-1 규칙에 맞추려면 프리미티브(예: `--green-300`, `--green-900`)로 옮긴 뒤 참조해야 한다.
+- 랜딩(`index.html`)은 다크 모드를 지원하지 않는다.
+
+### 2-8. 랜딩 전용 토큰 (`index.html`, Figma 미등록)
+
+제품 화면 타이포(최대 20px)로는 랜딩 제목을 만들 수 없어 따로 둔다. **프로토타입 화면에는 쓰지 않는다.**
+
+| 토큰 | 값 | 용도 |
+|---|---|---|
+| `--fs-display-1` | clamp(2.5rem, 1.2rem + 6.2vw, 7.25rem) | 히어로·마무리 제목 (1440px에서 약 110px) |
+| `--fs-display-2` | clamp(1.875rem, 1.1rem + 3.2vw, 4rem) | 섹션 제목 |
+| `--fs-display-3` | clamp(1.25rem, 1rem + 1.1vw, 1.875rem) | 항목 제목 |
+| `--fs-lead` / `--fs-body-lg` | 17~21px / 16px | 리드 문단 / 랜딩 본문 |
+| `--lh-display` | 1.08 | 큰 제목 행간 (자간 -0.03 ~ -0.04em) |
+| `--color-bg-inverse` | indigo-900 | 강조 섹션 띠 배경 |
+| `--color-text-inverse-secondary` | indigo-200 | 강조 띠 위 보조 글자 (11.2:1) |
+| `--color-border-inverse` | indigo-700 | 강조 띠 위 구분선 |
+| 큰 버튼 `.btn--lg` | 높이 48px, 글자 16px | 히어로·마무리의 주요 행동에만 |
 
 ---
 
@@ -195,7 +268,13 @@ fallback: `-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans 
 | 채팅 위 패널 | 가짜 AI 채팅 화면 위 오른쪽에 열리는 패널 (폭 420px) | `--color-bg-white`, 왼쪽 1px `--color-border-default`, `--shadow-overlay`. 카드는 1열 목록. |
 | 전체 작업대 | 상단 찾기 바 + 카드 그리드 | 페이지 배경 `--color-bg-gray`, 최대 폭 1200px 가운데 정렬, `grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))`, 간격 `--space-4` |
 
-- 기준 해상도는 1440 × 900이다. 1024px 이하에서는 그리드가 자동으로 2열 → 1열로 줄어들게만 한다.
+- 기준 해상도는 1440 × 900이다.
+
+| 구간 | 규칙 |
+|---|---|
+| 1200px 이상 | 패널이 열리면 채팅 본문을 밀어 'REFLOW' 버튼이 가려지지 않게 한다 |
+| 1024px 이하 | 카드 그리드가 자동으로 2열 → 1열로 줄어든다 |
+| 760px 이하 (모바일) | 1열. 채팅 왼쪽 목록을 숨기고, 화면 바깥 여백은 `--space-4`(16px) ~ 20px. 클릭 영역 최소 32 × 32px 유지 |
 - 대시보드형 차트, 통계 위젯, KPI 카드는 만들지 않는다. 이 서비스는 대시보드가 아니라 **작업대**다.
 
 ### 3-2. 여백 원칙
@@ -330,6 +409,7 @@ Body Small Bold, 높이 22px, 좌우 여백 8px, radius `--radius-flag`.
 - 클릭 영역은 최소 32 × 32px.
 - 색만으로 상태를 구분하지 않는다. 상태 배지에는 항상 글자가 있다.
 - 아이콘만 있는 버튼에는 `aria-label`을 단다.
+- `prefers-reduced-motion: reduce`를 존중한다. (2-6)
 
 ---
 
@@ -364,6 +444,7 @@ UI 코드를 만들기 전에 아래를 모두 통과해야 한다.
 ```
 - 프레임워크·빌드 도구 없이 vanilla HTML/CSS/JS로 만든다. 외부 리소스는 Pretendard CDN만 쓴다.
 - 파일 하나만 열어도 동작해야 한다. (서버 없이 더블클릭으로 실행)
+- 파일 이름은 영문 소문자로 쓴다: `index.html`(랜딩), `prototype.html`(프로토타입).
 
 ### 8-2. 이름 규칙
 - 클래스는 BEM: `.summary-card`, `.summary-card__title`, `.summary-card--selected`
@@ -384,11 +465,4 @@ UI 코드를 만들기 전에 아래를 모두 통과해야 한다.
 ---
 
 ## 9. 에이전트 응답 방식
-1. 한국어 존댓말로 답한다.
-2. **결론·액션을 먼저** 말하고, 설명은 짧게 뒤에 붙이거나 생략한다.
-3. 코드 작성 전에 "이 코드에서 헷갈릴 수 있는 점"을 1~2줄로 먼저 말한다.
-4. 작업은 Step 1 → 2 → 3으로 나누고 한 번에 하나씩 진행한다. 각 Step 끝에 "완료되면 알려주세요"로 확인을 받는다.
-5. 선택지는 최대 2개까지만 제시한다.
-6. "된 거야?", "맞아?" 질문에는 Yes/No를 먼저, 이유는 한 줄로 답한다.
-7. 에러 메시지를 받으면 원인 한 줄 + 해결 코드/명령어를 바로 준다.
-8. 이 문서에 없는 디자인 결정이 필요하면, 임의로 정하지 말고 제안 1개 + 이유 한 줄로 확인받는다.
+작업 규칙이라 `.cursor/rules/agent-response.mdc`로 옮겼다.
