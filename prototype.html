@@ -332,7 +332,7 @@ body[data-panel="open"] .chat__intro { display: none; }
   max-width: 1200px; margin: 0 auto;
   padding: var(--space-4) var(--space-7);
 }
-.reflow__brand { font-size: var(--fs-h1); font-weight: var(--fw-bold); }
+.reflow__brand { font-size: var(--fs-h1); font-weight: 900; }
 .reflow__header-meta {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
 }
@@ -664,13 +664,20 @@ html[data-theme="dark"] .chat__switch .tabs-indicator--pill {
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-1depth);
   cursor: pointer;
+  transition:
+    border-color var(--duration-ui) ease,
+    background-color var(--duration-ui) ease;
 }
-.summary-card:hover { border-color: var(--color-border-primary); }
+.summary-card:hover {
+  border-color: var(--color-border-primary);
+  background: var(--indigo-50);
+}
 /* 선택됨: 테두리가 2px이 되는 만큼 안쪽 여백을 1px 줄여 내용이 밀리지 않게 한다 */
 .summary-card--selected,
 .summary-card--selected:hover {
   padding: calc(var(--space-5) - 1px);
   border: 2px solid var(--color-primary-sub);
+  background: var(--color-bg-white);
 }
 .summary-card__head { display: grid; gap: var(--space-1); }
 .summary-card__meta {
@@ -1047,8 +1054,12 @@ body::before {
 .chat__intro, .chat__resumed {
   background: var(--glass); border: 1px solid var(--glass-border);
   backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 2px 8px rgba(36, 28, 75, 0.08);
 }
-.chat__turn--user .chat__text { background: var(--glass-strong); border: 1px solid var(--glass-border); }
+.chat__turn--user .chat__text {
+  background: var(--glass-strong); border: 1px solid var(--glass-border);
+  box-shadow: 0 2px 8px rgba(36, 28, 75, 0.08);
+}
 .chat__composer-box {
   background: var(--glass-strong);
   backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
@@ -1089,6 +1100,7 @@ html[data-theme="dark"] .theme-toggle .tabs-indicator--pill { background: var(--
 .filter-bar, .empty-state {
   background: var(--glass); border-color: var(--glass-border);
   backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 2px 8px rgba(36, 28, 75, 0.08);
 }
 body[data-view="panel"] .filter-bar { backdrop-filter: none; -webkit-backdrop-filter: none; }
 .filter-chip, .theme-tag, .btn--secondary, .edit-form__input { background: var(--glass-strong); }
@@ -1098,16 +1110,29 @@ body[data-view="panel"] .filter-bar { backdrop-filter: none; -webkit-backdrop-fi
   backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
 }
 /* 선택된 카드의 2px 테두리와 마우스 올림 테두리는 그대로 둔다 */
-.summary-card:not(.summary-card--selected) { border-color: var(--glass-border); }
-.summary-card:not(.summary-card--selected):hover { border-color: var(--color-border-primary); }
+.summary-card:not(.summary-card--selected) {
+  border-color: var(--glass-border);
+  box-shadow: 0 2px 8px rgba(36, 28, 75, 0.08);
+}
+.summary-card:not(.summary-card--selected):hover {
+  border-color: var(--color-border-primary);
+  background: color-mix(in srgb, var(--indigo-50) 88%, transparent);
+}
 /* 패널 안에서는 바탕도 유리라 흰 선이 안 보인다 → 연한 회색 선 유지 */
 body[data-view="panel"] .summary-card { background: var(--glass-strong); }
 body[data-view="panel"] .summary-card:not(.summary-card--selected) { border-color: var(--color-border-light); }
-body[data-view="panel"] .summary-card:not(.summary-card--selected):hover { border-color: var(--color-border-primary); }
+body[data-view="panel"] .summary-card:not(.summary-card--selected):hover {
+  border-color: var(--color-border-primary);
+  background: color-mix(in srgb, var(--indigo-50) 70%, var(--glass-strong));
+}
+body[data-view="panel"] .summary-card--selected,
+body[data-view="panel"] .summary-card--selected:hover {
+  background: var(--glass-strong);
+}
 
 /* 모달 */
 .modal__box {
-  background: var(--glass-strong);
+  background: var(--color-bg-white) !important;
   backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%);
 }
 .modal__head, .modal__foot { border-color: var(--glass-border); }
