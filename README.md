@@ -104,7 +104,6 @@ flowchart LR
 **여러 AI 대화를 한눈에 정리해주는 화면**
 
 - 랜딩페이지: `index.html` (서비스 소개 + 프로토타입 바로 가기)
-  - 첫 화면 three.js 장면의 원본은 `hero-scene/src/scene.js`입니다. 고친 뒤 `hero-scene` 폴더에서 `npm install` → `npm run build` 하면 `index.html` 안에 다시 들어갑니다.
 - 시연용 프로토타입: `prototype.html` (채팅 위 패널 + 전체 작업대)
 - 창이 1개, 3개, 5개일 때 **이전 답을 찾는 시간**과 **잘못된 창에 질문한 횟수**를 비교
 
