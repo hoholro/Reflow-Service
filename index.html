@@ -598,22 +598,43 @@
       border: 1px solid var(--color-border-light); border-radius: var(--radius-1depth);
       overflow: hidden;
     }
-    .mock-chat { position: absolute; inset: 0; display: flex; flex-direction: column; }
-    .mock-chat__head {
-      display: flex; align-items: center; gap: var(--space-3);
-      height: 52px; padding: 0 var(--space-6); flex: none;
-      border-bottom: 1px solid var(--color-border-light);
-      font-size: var(--fs-body); font-weight: var(--fw-bold);
+    /* 패널 옆 가짜 채팅 — prototype.html .chat__* 구조를 축소해 맞춤 */
+    .mock-chat {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; min-width: 0;
+      padding-right: min(420px, 100%);
+      overflow: hidden;
     }
     .mock-chat__body {
-      flex: 1; display: flex; flex-direction: column; gap: var(--space-3);
-      width: min(620px, calc(100% - 420px - var(--space-6))); padding: var(--space-6);
+      flex: 1; min-height: 0; overflow-y: auto;
+      width: min(720px, calc(100% - var(--space-8)));
+      margin: 0 auto;
+      padding: var(--space-7) 0 var(--space-6);
+    }
+    .mock-chat__context { font-size: var(--fs-small); color: var(--color-text-secondary); }
+    .mock-chat__title { margin-top: var(--space-1); font-size: var(--fs-h1); font-weight: var(--fw-bold); }
+    .mock-chat__thread { display: grid; gap: var(--space-5); margin-top: var(--space-6); list-style: none; }
+    .mock-turn { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-width: 0; }
+    .mock-turn--user { align-items: flex-end; }
+    .mock-turn__role { font-size: var(--fs-small); color: var(--color-text-secondary); }
+    .mock-turn__text { max-width: 90%; margin: 0; white-space: pre-wrap; font-size: var(--fs-body); line-height: var(--lh-reading); }
+    .mock-turn--user .mock-turn__text {
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-1depth);
+      background: var(--color-bg-gray);
     }
     .mock-chat__composer {
-      display: flex; align-items: center; flex: none;
-      width: min(572px, calc(100% - 420px - var(--space-8) - var(--space-6)));
-      height: 48px; margin: 0 var(--space-6) var(--space-6); padding: 0 var(--space-4);
-      border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
+      flex: none;
+      width: min(720px, calc(100% - var(--space-8)));
+      margin: 0 auto;
+      padding-bottom: var(--space-4);
+    }
+    .mock-chat__composer-box {
+      display: flex; align-items: center;
+      min-height: 48px; padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-1depth);
+      background: var(--color-bg-white);
       font-size: var(--fs-body); color: var(--color-text-tertiary);
     }
     .mock-panel {
@@ -813,6 +834,9 @@
       background: var(--glass); border-color: var(--glass-border);
       backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
     }
+    .mini-card, .summary-card {
+      box-shadow: 0 2px 8px rgba(36, 28, 75, 0.08);
+    }
     .condition__mock { border: 1px solid var(--glass-border); }
     .condition__mock .mini-card, .mock-panel .mini-card, .mock-workspace .mini-card { background: var(--glass-strong); backdrop-filter: none; -webkit-backdrop-filter: none; }
     .mock-workspace { background: color-mix(in srgb, var(--gray-0) 35%, transparent); }
@@ -820,6 +844,14 @@
     .transcript__head, .transcript__composer { border-color: var(--glass-border); }
     .field, .segmented, .chip, .btn--secondary, .mock-search { background: var(--glass-strong); }
     .bubble--user { background: color-mix(in srgb, var(--gray-100) 80%, transparent); }
+    .mock-turn--user .mock-turn__text {
+      background: var(--glass-strong); border: 1px solid var(--glass-border);
+      box-shadow: 0 2px 8px rgba(36, 28, 75, 0.08);
+    }
+    .mock-chat__composer-box {
+      background: var(--glass-strong);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+    }
 
     .motion-ok .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
     .motion-ok .reveal.is-in { opacity: 1; transform: none; }
@@ -863,8 +895,9 @@
       .faq > h2, .faq__list { grid-column: 1 / -1; }
       .cta__title, .cta__side { grid-column: 1 / -1; }
       .try__title, .try__steps, .try__note { grid-column: 1 / -1; }
-      .mock-chat__body { width: auto; }
-      .mock-chat__composer { width: auto; }
+      .mock-chat { padding-right: min(420px, 70%); }
+      .mock-chat__body,
+      .mock-chat__composer { width: min(720px, calc(100% - var(--space-8))); }
       .mock-panel { width: min(420px, 70%); }
     }
     @media (max-width: 760px) {
@@ -1151,14 +1184,31 @@
       </div>
       <div class="views-stage" id="viewsStage" data-view="panel" aria-hidden="true">
         <div class="mock-chat">
-          <div class="mock-chat__head"><span class="ai-label">Claude</span>조별 발표 자료 마감 맞추기</div>
           <div class="mock-chat__body">
-            <p class="bubble bubble--user">조별 발표 슬라이드를 모으는 일정을 짜줘. 발표는 다음 주 월요일이야.</p>
-            <p class="bubble bubble--ai">금요일 오전까지 각자 슬라이드를 올리고 주말에 합치는 일정은 어떨까요?</p>
-            <p class="bubble bubble--user">마감은 금요일 오전 대신 목요일 20시로 확정할게.</p>
-            <p class="bubble bubble--ai">알겠어요. 공지에는 목요일 20시만 넣을게요.</p>
+            <p class="mock-chat__context">가상 채팅 화면 · Claude</p>
+            <h3 class="mock-chat__title">조별 발표 자료 마감 맞추기</h3>
+            <ol class="mock-chat__thread" aria-label="현재 대화">
+              <li class="mock-turn mock-turn--user">
+                <span class="mock-turn__role">나</span>
+                <p class="mock-turn__text">조별 발표 슬라이드를 모으는 일정을 짜줘. 발표는 다음 주 월요일이야.</p>
+              </li>
+              <li class="mock-turn">
+                <span class="mock-turn__role">Claude</span>
+                <p class="mock-turn__text">금요일 오전까지 각자 슬라이드를 올리고 주말에 합치는 일정은 어떨까요?</p>
+              </li>
+              <li class="mock-turn mock-turn--user">
+                <span class="mock-turn__role">나</span>
+                <p class="mock-turn__text">마감은 금요일 오전 대신 목요일 20시로 확정할게.</p>
+              </li>
+              <li class="mock-turn">
+                <span class="mock-turn__role">Claude</span>
+                <p class="mock-turn__text">알겠어요. 공지에는 목요일 20시만 넣을게요.</p>
+              </li>
+            </ol>
           </div>
-          <div class="mock-chat__composer">메시지 입력</div>
+          <div class="mock-chat__composer">
+            <div class="mock-chat__composer-box">이 대화에서 이어서 쓸 내용</div>
+          </div>
         </div>
         <aside class="mock-panel">
           <div class="mock-panel__head"><p class="mock-panel__title">REFLOW</p><p class="count">카드 20개</p></div>
