@@ -3,3 +3,6 @@
 
 # A2UI 실험 페이지 빌드 의존성
 a2ui-demo/node_modules/
+
+# 히어로 장면 빌드 의존성
+hero-scene/node_modules/
