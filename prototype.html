@@ -937,6 +937,7 @@ html[data-modal-open] .chat__thread {
 /* 4-10. 알림 */
 .toast {
   position: fixed; left: 50%; bottom: var(--space-6); z-index: 5;
+  display: flex; align-items: center; gap: var(--space-3);
   transform: translate(-50%, 0);
   max-width: calc(100% - var(--space-7));
   padding: var(--space-3) var(--space-4);
@@ -951,7 +952,7 @@ html[data-modal-open] .chat__thread {
     transform var(--duration-toast) ease;
 }
 .toast[hidden] {
-  display: block !important;
+  display: flex !important;
   opacity: 0;
   transform: translate(-50%, 12px);
   pointer-events: none;
@@ -1023,6 +1024,25 @@ html[data-modal-open] .chat__thread {
 .status-badge[data-status="check"] { background: var(--color-status-warning-bg); color: var(--color-status-warning); }
 .status-badge[data-status="edited"] { background: var(--color-bg-primary-subtle); color: var(--color-primary-sub); }
 
+/* 4-9. 저장 알림의 실행 취소 · 요약 항목 옮기기 */
+.toast__action {
+  flex: none; height: 32px; padding: 0 var(--space-2);
+  border: 0; border-radius: var(--radius-2depth);
+  background: transparent; color: inherit;
+  font: inherit; font-weight: var(--fw-bold);
+  text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer;
+}
+.toast__action:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.edit-form__move {
+  flex: none; width: 112px; height: 32px; padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-default); border-radius: var(--radius-2depth);
+  background: var(--color-bg-white); color: var(--color-text-secondary);
+  font: inherit; font-size: var(--fs-small);
+  cursor: pointer;
+}
+.edit-form__move:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
 /* ==========================================================================
    실험: 그라데이션 배경 + 반투명 카드 — 이 블록과 :root·다크의 실험 토큰만 지우면 원래대로 돌아간다
    ========================================================================== */
@@ -1091,7 +1111,7 @@ html[data-theme="dark"] .theme-toggle .tabs-indicator--pill { background: var(--
   backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
 }
 body[data-view="panel"] .filter-bar { backdrop-filter: none; -webkit-backdrop-filter: none; }
-.filter-chip, .theme-tag, .btn--secondary, .edit-form__input { background: var(--glass-strong); }
+.filter-chip, .theme-tag, .btn--secondary, .edit-form__input, .edit-form__move { background: var(--glass-strong); }
 .filter-chip:hover, .btn--secondary:hover { background: color-mix(in srgb, var(--color-bg-gray) 85%, transparent); }
 .summary-card {
   background: var(--glass);
@@ -1129,7 +1149,9 @@ body[data-view="panel"] .summary-card:not(.summary-card--selected):hover { borde
       <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="ChatGPT">ChatGPT</button>
       <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="Claude">Claude</button>
       <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="Gemini">Gemini</button>
+      <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="Claude Code">Claude Code</button>
       <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="Perplexity">Perplexity</button>
+      <button type="button" class="chat__switch-btn" data-action="switch-ai" data-ai="Lovable">Lovable</button>
     </div>
     <div class="chat__actions">
       <button type="button" class="btn btn--text" data-action="open-guide">시연 안내</button>
@@ -1209,7 +1231,9 @@ body[data-view="panel"] .summary-card:not(.summary-card--selected):hover { borde
         <button type="button" class="filter-chip" data-action="filter-ai" data-ai="ChatGPT" aria-pressed="false">ChatGPT</button>
         <button type="button" class="filter-chip" data-action="filter-ai" data-ai="Claude" aria-pressed="false">Claude</button>
         <button type="button" class="filter-chip" data-action="filter-ai" data-ai="Gemini" aria-pressed="false">Gemini</button>
+        <button type="button" class="filter-chip" data-action="filter-ai" data-ai="Claude Code" aria-pressed="false">Claude Code</button>
         <button type="button" class="filter-chip" data-action="filter-ai" data-ai="Perplexity" aria-pressed="false">Perplexity</button>
+        <button type="button" class="filter-chip" data-action="filter-ai" data-ai="Lovable" aria-pressed="false">Lovable</button>
       </div>
       <div class="filter-bar__sort" role="group" aria-label="정렬" data-tabs="underline">
         <span class="tabs-indicator tabs-indicator--underline" aria-hidden="true"></span>
@@ -1251,11 +1275,13 @@ body[data-view="panel"] .summary-card:not(.summary-card--selected):hover { borde
     </header>
     <div class="modal__body guide-copy">
       <ol>
-        <li>ChatGPT 상단에서 <strong>REFLOW</strong>를 열고 <strong>조별 발표 자료 마감 맞추기</strong> 카드를 고릅니다.</li>
-        <li>‘확정’ 아래 <strong>근거 보기</strong>를 누릅니다. AI가 금요일을 제안했지만 팀은 목요일 20시로 바꿨습니다.</li>
-        <li><strong>요약 수정</strong>으로 요약을 고칩니다. <strong>바로 가기</strong>를 누르면 Claude의 해당 대화 화면이 열립니다.</li>
+        <li><strong>전체 작업대</strong>를 열어 <strong>최신 순</strong>으로 여섯 가지 AI의 카드 20장을 봅니다.</li>
+        <li><strong>테마 순</strong>을 누르면 같은 주제끼리 묶입니다.</li>
+        <li><strong>2박 3일 여행 일정 짜기</strong> 카드를 눌러 지난 대화를 그대로 다시 봅니다.</li>
+        <li><strong>요약 수정</strong>에서 미정의 여행지를 <strong>옮기기 → 확정으로</strong> 옮기고 ‘경주’로 고쳐 저장합니다. 알림의 <strong>실행 취소</strong>도 눌러 봅니다.</li>
+        <li><strong>바로 가기</strong>로 ChatGPT의 그 대화로 이동합니다.</li>
       </ol>
-      <p>ChatGPT와 Claude는 시연용 화면입니다. 실제 대화 링크는 수정 화면에서 직접 연결할 수 있습니다. 열 때 해당 서비스의 로그인과 열람 권한이 필요할 수 있습니다.</p>
+      <p>AI 화면은 모두 시연용입니다. 실제 대화 링크는 요약 수정에서 연결할 수 있고, 열 때 해당 서비스의 로그인이 필요할 수 있습니다. ‘AI가 권한 것’과 ‘내가 정한 것’의 차이는 <strong>조별 발표 자료 마감 맞추기</strong> 카드의 근거 보기에서 볼 수 있습니다.</p>
       <details class="guide-extra">
         <summary>발표 준비 / 이 화면에서 검증할 것</summary>
         <p>같은 카드와 원문을 제공한 상태에서 전체 작업대를 열 때와 채팅 위에서 패널을 열 때를 비교할 수 있습니다. 현재 채팅에서 다른 대화를 찾기까지 걸린 시간, 처음 고른 대화의 정확도, 비교를 위해 열어 본 창 수를 기록합니다.</p>
@@ -1263,12 +1289,15 @@ body[data-view="panel"] .summary-card:not(.summary-card--selected):hover { borde
     </div>
     <footer class="modal__foot">
       <button type="button" class="btn btn--secondary" data-action="close-modal">닫기</button>
-      <button type="button" class="btn btn--primary" data-action="guided-start">마감 사례 열기</button>
+      <button type="button" class="btn btn--primary" data-action="guided-start">여행 카드 열기</button>
     </footer>
   </div>
 </dialog>
 
-<p class="toast" id="toast" role="status" hidden></p>
+<div class="toast" id="toast" role="status" hidden>
+  <span id="toast-text"></span>
+  <button type="button" class="toast__action" id="toast-action" hidden>실행 취소</button>
+</div>
 
 <noscript><p>카드와 대화 원문을 보려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
 
@@ -1428,19 +1457,19 @@ const cards = [
     id: "c09", title: "가족여행 숙소 조건 정리", ai: "Gemini", theme: "여행",
     updatedAt: "2026-11-17T21:10", status: "draft",
     confirmed: [
-      { text: "여행지: 경주", evidence: ["m3"] },
-      { text: "일정: 12월 12일부터 2박 3일", evidence: ["m3"] },
-      { text: "엘리베이터가 있는 숙소", evidence: ["m4"] },
-      { text: "방 두 개", evidence: ["m4"] }
+      { text: "엘리베이터가 있는 숙소", evidence: ["m3"] },
+      { text: "방 두 개", evidence: ["m3"] }
     ],
-    pending: [{ text: "1박 예산 상한", evidence: ["m4"] }],
-    next: [{ text: "역 근처 후보 세 곳의 취소 조건 비교하기", evidence: ["m5"] }],
+    pending: [
+      { text: "1박 예산 상한", evidence: ["m3"] },
+      { text: "숙소 지역 (여행지가 정해지면)", evidence: ["m1"] }
+    ],
+    next: [{ text: "후보 세 곳의 취소 조건 비교하기", evidence: ["m4"] }],
     messages: [
-      { id: "m1", role: "user", text: "부모님과 2박 3일로 갈 곳을 찾고 있어. 제주와 경주 중에 고민이야." },
-      { id: "m2", role: "ai", text: "이동 부담을 줄이려면 역과 주요 방문지 사이 거리를 함께 보면 좋아요." },
-      { id: "m3", role: "user", text: "경주로 정했어. 날짜는 12월 12일부터 2박 3일이야." },
-      { id: "m4", role: "user", text: "숙소는 엘리베이터가 있어야 하고, 방은 두 개가 필요해. 1박 예산은 가족한테 물어보고 정할게." },
-      { id: "m5", role: "ai", text: "그럼 역 근처 후보 세 곳의 취소 조건을 같은 기준으로 비교해 보세요." }
+      { id: "m1", role: "user", text: "부모님과 2박 3일 여행 숙소 조건을 먼저 정리하고 싶어. 여행지는 아직 제주랑 경주 중에 고민이야." },
+      { id: "m2", role: "ai", text: "어디로 가든 이동 부담을 줄이려면 숙소에서 주요 방문지까지 거리를 함께 보면 좋아요." },
+      { id: "m3", role: "user", text: "숙소는 엘리베이터가 있어야 하고, 방은 두 개가 필요해. 1박 예산은 가족한테 물어보고 정할게." },
+      { id: "m4", role: "ai", text: "그럼 후보 세 곳의 취소 조건을 같은 기준으로 비교해 보세요." }
     ],
     sourceUrl: ""
   },
@@ -1462,18 +1491,18 @@ const cards = [
     sourceUrl: ""
   },
   {
-    id: "c11", title: "경주 이동 동선 알아보기", ai: "Perplexity", theme: "여행",
+    id: "c11", title: "부모님과 이동 동선 알아보기", ai: "Perplexity", theme: "여행",
     updatedAt: "2026-11-19T19:05", status: "draft",
     confirmed: [
-      { text: "역에서 숙소까지 택시 이용", evidence: ["m3"] },
+      { text: "도착해서 숙소까지 택시 이용", evidence: ["m3"] },
       { text: "둘째 날은 걷는 구간 줄이기", evidence: ["m3"] }
     ],
     pending: [],
     next: [{ text: "둘째 날 가고 싶은 곳 목록 적기", evidence: ["m4"] }],
     messages: [
-      { id: "m1", role: "user", text: "역에서 숙소까지 부모님과 이동하기 편한 방법을 고민 중이야." },
+      { id: "m1", role: "user", text: "여행지에 도착해서 숙소까지 부모님과 이동하기 편한 방법을 고민 중이야." },
       { id: "m2", role: "ai", text: "짐이 있고 인원이 여럿이면 택시가 편해요. 시내에서는 걷는 거리를 기준으로 동선을 짜 보세요." },
-      { id: "m3", role: "user", text: "역에서 숙소까지는 택시로 가자. 둘째 날은 걷는 구간을 줄이고 싶어." },
+      { id: "m3", role: "user", text: "도착해서 숙소까지는 택시로 가자. 둘째 날은 걷는 구간을 줄이고 싶어." },
       { id: "m4", role: "ai", text: "방문지를 가까운 곳끼리 묶으면 걷는 구간이 줄어요. 둘째 날 가고 싶은 곳 목록을 먼저 적어 보세요." }
     ],
     sourceUrl: ""
@@ -1485,10 +1514,148 @@ const cards = [
     pending: [{ text: "첫날 저녁 장소", evidence: ["m3"] }],
     next: [{ text: "일정표 틀 만들기", evidence: ["m4"] }],
     messages: [
-      { id: "m1", role: "user", text: "경주 2박 3일 일정표를 표로 만들고 싶어. 부모님 체력을 고려해야 해." },
+      { id: "m1", role: "user", text: "가족여행 2박 3일 일정표를 표로 만들고 싶어. 부모님 체력을 고려해야 해." },
       { id: "m2", role: "ai", text: "하루에 큰 일정은 두 개까지만 넣고, 오후에 쉬는 시간을 두면 무리가 없어요." },
       { id: "m3", role: "user", text: "하루 일정은 두 개까지로 하자. 첫날 저녁을 숙소에서 먹을지 밖에서 먹을지는 아직 모르겠어." },
       { id: "m4", role: "ai", text: "일정표 틀을 먼저 만들어 두고, 정해지는 대로 칸을 채워 보세요." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c13", title: "2박 3일 여행 일정 짜기", ai: "ChatGPT", theme: "여행",
+    updatedAt: "2026-11-21T08:30", status: "draft",
+    confirmed: [{ text: "날짜: 11월 28일~30일 (2박 3일)", evidence: ["m1"] }],
+    pending: [{ text: "여행지: 제주 또는 경주", evidence: ["m3"] }],
+    next: [{ text: "가족과 여행지 정하기", evidence: ["m3", "m4"] }],
+    messages: [
+      { id: "m1", role: "user", text: "부모님이랑 11월 말에 2박 3일로 여행 가려고 해. 날짜는 28일부터 30일까지로 정했어." },
+      { id: "m2", role: "ai", text: "제주와 경주 모두 2박 3일로 다녀오기 좋아요. 제주는 비행기, 경주는 KTX로 이동 시간이 비슷해요." },
+      { id: "m3", role: "user", text: "둘 다 괜찮아 보여서 못 고르겠어. 여행지는 가족이랑 얘기해 보고 정할게." },
+      { id: "m4", role: "ai", text: "정해지면 알려 주세요. 여행지에 맞춰 날짜별 일정을 바로 짜 드릴게요." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c14", title: "매출 증감률 엑셀 수식 만들기", ai: "ChatGPT", theme: "업무",
+    updatedAt: "2026-11-14T16:20", status: "draft",
+    confirmed: [
+      { text: "증감률 = (이번 달 - 지난달) / 지난달", evidence: ["m2", "m3"] },
+      { text: "소수 첫째 자리까지 표시", evidence: ["m3"] }
+    ],
+    pending: [{ text: "지난달 매출이 0일 때 표시 방법", evidence: ["m4"] }],
+    next: [{ text: "보고서 표에 수식 붙여 넣기", evidence: ["m5"] }],
+    messages: [
+      { id: "m1", role: "user", text: "월별 매출 표에 지난달 대비 증감률 칸을 넣고 싶어." },
+      { id: "m2", role: "ai", text: "=(C3-B3)/B3 처럼 이번 달에서 지난달을 뺀 값을 지난달로 나누면 돼요." },
+      { id: "m3", role: "user", text: "그 수식으로 하자. 표시는 소수 첫째 자리까지만." },
+      { id: "m4", role: "ai", text: "지난달 매출이 0이면 오류가 나요. 빈칸으로 둘지 ‘신규’라고 쓸지 정해 두면 좋아요." },
+      { id: "m5", role: "user", text: "그건 팀장님께 여쭤볼게. 일단 보고서 표에 수식부터 붙여 넣을게." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c15", title: "카드 정렬 기능 코드 고치기", ai: "Claude Code", theme: "과제",
+    updatedAt: "2026-11-20T23:10", status: "draft",
+    confirmed: [
+      { text: "테마 순에서도 묶음 안은 최신 순", evidence: ["m3"] },
+      { text: "고른 정렬은 브라우저에 저장", evidence: ["m3"] }
+    ],
+    pending: [{ text: "정렬 버튼을 검색창 옆에 둘지", evidence: ["m5"] }],
+    next: [{ text: "카드 20장으로 정렬 확인하기", evidence: ["m4"] }],
+    messages: [
+      { id: "m1", role: "user", text: "테마 순으로 바꾸면 묶음 안의 카드 순서가 뒤죽박죽이야. 고쳐 줘." },
+      { id: "m2", role: "ai", text: "묶기 전에 날짜로 먼저 정렬하지 않아서 생긴 문제예요. 최신 순으로 정렬한 뒤 테마별로 묶도록 고쳤어요." },
+      { id: "m3", role: "user", text: "좋아. 묶음 안은 최신 순으로 두고, 고른 정렬은 다음에 열어도 그대로 남게 브라우저에 저장해 줘." },
+      { id: "m4", role: "ai", text: "저장까지 넣었어요. 카드 20장짜리 예시 데이터로 한 번 확인해 보세요." },
+      { id: "m5", role: "user", text: "정렬 버튼을 검색창 옆에 둘지는 조원들 의견 듣고 정할게." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c16", title: "설문 결과 분석 코드 짜기", ai: "Claude Code", theme: "과제",
+    updatedAt: "2026-11-16T22:40", status: "check",
+    confirmed: [
+      { text: "응답 파일(CSV)을 파이썬으로 읽기", evidence: ["m3"] },
+      { text: "문항별 막대그래프로 보기", evidence: ["m3"] }
+    ],
+    pending: [{ text: "빈 응답 처리 방법", evidence: ["m4", "m5"] }],
+    next: [{ text: "가짜 응답 10개로 먼저 돌려 보기", evidence: ["m5"] }],
+    messages: [
+      { id: "m1", role: "user", text: "설문 응답이 모이면 바로 그래프를 볼 수 있게 분석 코드를 짜 두고 싶어." },
+      { id: "m2", role: "ai", text: "응답을 CSV로 내려받아 파이썬으로 읽고, 문항별로 그래프를 그리는 구조를 추천해요." },
+      { id: "m3", role: "user", text: "그렇게 하자. 그래프는 문항별 막대그래프면 충분해." },
+      { id: "m4", role: "ai", text: "빈 응답은 빼고 세는 쪽으로 코드를 짜 두었어요." },
+      { id: "m5", role: "user", text: "빈 응답을 뺄지는 아직 몰라. 일단 가짜 응답 10개로 돌려 보자." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c17", title: "대시보드 데이터 불러오기 오류 잡기", ai: "Claude Code", theme: "업무",
+    updatedAt: "2026-11-18T11:05", status: "draft",
+    confirmed: [
+      { text: "원인: 날짜 형식이 파일마다 다름", evidence: ["m2"] },
+      { text: "날짜를 한 형식으로 맞춰서 읽기", evidence: ["m3"] }
+    ],
+    pending: [{ text: "지난 데이터까지 고칠지", evidence: ["m3"] }],
+    next: [{ text: "고친 코드를 테스트 서버에 올리기", evidence: ["m4"] }],
+    messages: [
+      { id: "m1", role: "user", text: "대시보드가 월요일마다 데이터를 못 불러와. 로그를 같이 봐 줘." },
+      { id: "m2", role: "ai", text: "월요일 파일만 날짜가 ‘2026/11/16’ 형식이고 나머지는 ‘2026-11-16’이라 읽다가 멈춰요." },
+      { id: "m3", role: "user", text: "날짜를 한 형식으로 맞춰서 읽게 고치자. 지난 데이터까지 고칠지는 데이터팀에 물어볼게." },
+      { id: "m4", role: "ai", text: "고쳤어요. 테스트 서버에 먼저 올려서 다음 월요일 파일로 확인해 보세요." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c18", title: "REFLOW 시연 화면 만들기", ai: "Lovable", theme: "과제",
+    updatedAt: "2026-11-19T21:30", status: "draft",
+    confirmed: [
+      { text: "카드 요약은 확정 · 미정 · 다음 행동 세 칸", evidence: ["m3"] },
+      { text: "바로 가기는 카드 오른쪽 아래", evidence: ["m3"] }
+    ],
+    pending: [{ text: "다크 모드 넣을지", evidence: ["m5"] }],
+    next: [{ text: "조원들에게 링크 보내 의견 받기", evidence: ["m5"] }],
+    messages: [
+      { id: "m1", role: "user", text: "여러 AI 대화를 카드로 모아 보는 화면을 시연용으로 만들고 싶어." },
+      { id: "m2", role: "ai", text: "카드마다 AI 이름, 테마, 제목을 위에 두고, 아래에 요약을 넣는 구성으로 시작해 볼게요." },
+      { id: "m3", role: "user", text: "요약은 확정, 미정, 다음 행동 세 칸으로 나눠 줘. 바로 가기 버튼은 카드 오른쪽 아래에." },
+      { id: "m4", role: "ai", text: "반영했어요. 미리보기 링크로 확인해 보세요." },
+      { id: "m5", role: "user", text: "다크 모드는 넣을지 모르겠어. 조원들한테 링크 보내서 의견부터 받아 볼게." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c19", title: "팀 회의록 공유 페이지 만들기", ai: "Lovable", theme: "업무",
+    updatedAt: "2026-11-15T10:15", status: "draft",
+    confirmed: [
+      { text: "회의마다 결정 사항을 맨 위에", evidence: ["m3"] },
+      { text: "회사 계정으로만 열람", evidence: ["m3"] }
+    ],
+    pending: [{ text: "댓글 기능 넣을지", evidence: ["m4"] }],
+    next: [{ text: "지난 회의록 세 개 옮기기", evidence: ["m5"] }],
+    messages: [
+      { id: "m1", role: "user", text: "팀 회의록을 한곳에서 볼 수 있는 간단한 페이지가 필요해." },
+      { id: "m2", role: "ai", text: "회의 날짜별 목록과 회의록 상세 화면 두 개로 만들어 볼게요." },
+      { id: "m3", role: "user", text: "회의록마다 결정 사항을 맨 위에 보여 줘. 열람은 회사 계정으로만 되게 하고." },
+      { id: "m4", role: "ai", text: "댓글 기능도 붙일 수 있어요. 넣을까요?" },
+      { id: "m5", role: "user", text: "댓글은 좀 더 생각해 볼게. 지난 회의록 세 개부터 옮겨 둘게." }
+    ],
+    sourceUrl: ""
+  },
+  {
+    id: "c20", title: "가족여행 안내 페이지 만들기", ai: "Lovable", theme: "여행",
+    updatedAt: "2026-11-20T20:40", status: "draft",
+    confirmed: [
+      { text: "일정 · 숙소 · 연락처 세 부분", evidence: ["m3"] },
+      { text: "부모님 휴대폰에 맞춰 글씨 크게", evidence: ["m3"] }
+    ],
+    pending: [{ text: "첫 화면에 넣을 여행지 사진", evidence: ["m4"] }],
+    next: [{ text: "여행지가 정해지면 사진 고르기", evidence: ["m4"] }],
+    messages: [
+      { id: "m1", role: "user", text: "가족 단톡방에 보낼 여행 안내 페이지를 만들고 싶어." },
+      { id: "m2", role: "ai", text: "한 페이지에 필요한 정보만 모으는 구성이 좋아요. 어떤 내용을 넣을까요?" },
+      { id: "m3", role: "user", text: "일정, 숙소, 연락처 세 부분이면 돼. 부모님 휴대폰에서 보기 좋게 글씨는 크게 해 줘." },
+      { id: "m4", role: "user", text: "첫 화면 사진은 여행지가 정해지면 고를게." }
     ],
     sourceUrl: ""
   }
@@ -1518,7 +1685,7 @@ const detailModal = $("detail-modal");
 const editModal = $("edit-modal");
 const guideModal = $("guide-modal");
 const ICON_CLOSE = '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>';
-const DEMO_CARD_ID = "c02"; // 1분 시연 · 조별 발표 자료 마감 맞추기
+const DEMO_CARD_ID = "c13"; // 시연 안내 · 2박 3일 여행 일정 짜기 (덱 9장 시연 순서)
 const THEME_KEY = "reflow-theme";
 let toastTimer;
 
@@ -1785,11 +1952,36 @@ function renderDetail() {
     </div>`;
 }
 
-function renderEditLine(sectionLabel, item) {
+/* '옮기기'는 지금 칸을 뺀 나머지 두 칸만 고를 수 있다. 고르면 그 줄이 바로 그 칸으로 간다 */
+function renderMoveOptions(sectionKey) {
+  return '<option value="" selected>옮기기</option>' + SECTIONS
+    .filter((section) => section.key !== sectionKey)
+    .map((section) => `<option value="${section.key}">${section.label}으로</option>`)
+    .join("");
+}
+
+function renderEditLine(sectionKey, item) {
+  const sectionLabel = SECTIONS.find((section) => section.key === sectionKey).label;
   return `<div class="edit-form__line">
     <input class="edit-form__input" type="text" maxlength="80" value="${escapeHtml(item.text)}" data-evidence="${escapeHtml(item.evidence.join(","))}" aria-label="${sectionLabel} 항목">
+    <select class="edit-form__move" aria-label="이 항목을 다른 칸으로 옮기기">${renderMoveOptions(sectionKey)}</select>
     <button type="button" class="btn btn--text btn--small" data-action="remove-line" aria-label="${sectionLabel} 줄 삭제">삭제</button>
   </div>`;
+}
+
+function moveEditLine(select) {
+  const toKey = select.value;
+  if (!toKey) return;
+  const line = select.closest(".edit-form__line");
+  const target = SECTIONS.find((section) => section.key === toKey);
+  const group = $("edit-form").querySelector(`.edit-form__group[data-kind="${toKey}"]`);
+  group.querySelector(".edit-form__lines").appendChild(line);
+  const input = line.querySelector("input");
+  input.setAttribute("aria-label", `${target.label} 항목`);
+  line.querySelector('[data-action="remove-line"]').setAttribute("aria-label", `${target.label} 줄 삭제`);
+  select.innerHTML = renderMoveOptions(toKey);
+  $("edit-move-status").textContent = `‘${input.value.trim() || "빈 줄"}’ 항목을 ${target.label} 칸으로 옮겼어요.`;
+  input.focus();
 }
 
 function renderEdit() {
@@ -1797,7 +1989,7 @@ function renderEdit() {
   const groups = SECTIONS.map((section) => `
     <div class="edit-form__group" role="group" aria-labelledby="edit-label-${section.key}" data-kind="${section.key}" data-label="${section.label}">
       ${renderLabel(section, `edit-label-${section.key}`)}
-      <div class="edit-form__lines">${card[section.key].map((item) => renderEditLine(section.label, item)).join("")}</div>
+      <div class="edit-form__lines">${card[section.key].map((item) => renderEditLine(section.key, item)).join("")}</div>
       <button type="button" class="btn btn--text btn--small edit-form__add" data-action="add-line">줄 추가</button>
     </div>`).join("");
 
@@ -1810,6 +2002,7 @@ function renderEdit() {
       <button type="button" class="icon-btn" data-action="close-modal" aria-label="닫기">${ICON_CLOSE}</button>
     </header>
     <div class="modal__body">
+      <p class="visually-hidden" id="edit-move-status" role="status"></p>
       ${groups}
       <div class="edit-form__group">
         <label class="summary-card__label" for="edit-link">원본 링크</label>
@@ -1890,20 +2083,45 @@ function closeModal(dialog) {
   setTimeout(finish, 320);
 }
 
-function showToast(text) {
+/* action이 있으면 알림 안에 버튼(예: 실행 취소)을 함께 보여 주고 더 오래 띄운다.
+   마우스를 올리거나 버튼에 초점이 있는 동안에는 사라지지 않는다 */
+let toastAction = null;
+function showToast(text, action) {
   const toast = $("toast");
+  const button = $("toast-action");
   // 열린 모달은 화면 최상단 레이어에 뜨므로, 알림도 그 안으로 옮겨야 가려지지 않는다
-  const host = editModal.open ? editModal : detailModal.open ? detailModal : document.body;
+  // (닫히는 중인 모달은 곧 사라지므로 고르지 않는다)
+  const shown = (dialog) => dialog.open && !dialog.classList.contains("is-closing");
+  const host = shown(editModal) ? editModal : shown(detailModal) ? detailModal : document.body;
   host.appendChild(toast);
-  toast.textContent = text;
+  $("toast-text").textContent = text;
+  toastAction = action || null;
+  button.hidden = !action;
+  if (action) button.textContent = action.label;
   toast.hidden = true;
   // 한 프레임 숨긴 뒤 다시 열어 @starting-style 진입 애니메이션을 탄다
   requestAnimationFrame(() => {
     toast.hidden = false;
   });
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { toast.hidden = true; }, 3000);
+  scheduleToastHide(action ? 6000 : 3000);
 }
+
+function scheduleToastHide(ms) {
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    const toast = $("toast");
+    if (toast.matches(":hover, :focus-within")) { scheduleToastHide(1500); return; }
+    toast.hidden = true;
+    toastAction = null;
+  }, ms);
+}
+
+$("toast-action").addEventListener("click", () => {
+  const action = toastAction;
+  toastAction = null;
+  $("toast").hidden = true;
+  if (action) action.run();
+});
 
 function focusCard(id) {
   document.querySelector(`.summary-card[data-id="${id}"] .summary-card__title-btn`)?.focus();
@@ -1990,6 +2208,11 @@ function saveSummary() {
     linkInput.focus();
     return;
   }
+  // 실행 취소용: 고치기 전 상태를 통째로 복사해 둔다
+  const before = JSON.parse(JSON.stringify({
+    confirmed: card.confirmed, pending: card.pending, next: card.next,
+    sourceUrl: card.sourceUrl, status: card.status
+  }));
   SECTIONS.forEach((section) => {
     const inputs = $("edit-form").querySelectorAll(`[data-kind="${section.key}"] .edit-form__line input`);
     // 빈 줄은 저장하지 않는다. 새로 추가한 줄은 연결된 근거가 없다.
@@ -2002,7 +2225,14 @@ function saveSummary() {
   closeModal(editModal);
   renderCards();
   if (detailModal.open) renderDetail();
-  showToast("저장했어요");
+  showToast("저장했어요", { label: "실행 취소", run: () => undoEdit(card.id, before) });
+}
+
+function undoEdit(id, before) {
+  Object.assign(getCard(id), before);
+  renderCards();
+  if (detailModal.open && state.detailId === id) renderDetail();
+  showToast("고치기 전으로 되돌렸어요");
 }
 
 function goToSource(id) {
@@ -2050,7 +2280,7 @@ document.addEventListener("click", (event) => {
       openModal(guideModal);
       break;
     case "guided-start":
-      // 시연 흐름: 패널을 연 뒤 마감 카드의 근거 보기로 바로 이동
+      // 시연 흐름: 패널을 연 뒤 여행 카드의 원문 대화를 바로 연다
       guideModal.close();
       guideModal.classList.remove("is-closing");
       syncModalScrollLock();
@@ -2058,7 +2288,7 @@ document.addEventListener("click", (event) => {
       state.panelOpen = true;
       renderView();
       renderCards();
-      openDetail(DEMO_CARD_ID, true);
+      openDetail(DEMO_CARD_ID, false);
       break;
     case "switch-ai": {
       const latest = cards.filter((card) => card.ai === target.dataset.ai).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
@@ -2102,7 +2332,7 @@ document.addEventListener("click", (event) => {
     case "add-line": {
       const group = target.closest(".edit-form__group");
       const lines = group.querySelector(".edit-form__lines");
-      lines.insertAdjacentHTML("beforeend", renderEditLine(group.dataset.label, { text: "", evidence: [] }));
+      lines.insertAdjacentHTML("beforeend", renderEditLine(group.dataset.kind, { text: "", evidence: [] }));
       lines.lastElementChild.querySelector("input").focus();
       break;
     }
@@ -2123,6 +2353,10 @@ $("search").addEventListener("input", (event) => {
 $("edit-form").addEventListener("submit", (event) => {
   event.preventDefault();
   saveSummary();
+});
+
+$("edit-form").addEventListener("change", (event) => {
+  if (event.target.classList.contains("edit-form__move")) moveEditLine(event.target);
 });
 
 $("edit-form").addEventListener("input", (event) => {

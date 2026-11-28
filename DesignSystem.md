@@ -382,7 +382,7 @@ Body Small Bold, 높이 22px, 좌우 여백 8px, radius `--radius-flag`.
 - UI 안에 이모지를 쓰지 않는다. (README의 이모지는 문서용이다.)
 
 ### 5-3. 더미 데이터
-- AI 4종(ChatGPT, Claude, Gemini, Perplexity) × 테마 3종(과제, 업무, 여행)을 고루 섞는다.
+- AI 6종(ChatGPT, Claude, Gemini, Claude Code, Perplexity, Lovable) × 테마 3종(과제, 업무, 여행)을 고루 섞어 카드 20장을 둔다 (발표 덱 9장 시연 기준).
 - 카드 상태 3종(요약 초안, 확인 필요, 사용자 수정)이 모두 화면에 한 번 이상 보이게 한다.
 - 데이터 형태:
 
