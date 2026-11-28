@@ -1,5 +1,3 @@
 # Open Design Agent Kit: 검사 결과 스크린샷 (커밋하지 않음)
 .open-design/.checks/
 
-# A2UI 실험 페이지 빌드 의존성
-a2ui-demo/node_modules/
