@@ -451,6 +451,14 @@ body[data-view="panel"] .filter-bar__count {
   .chat { grid-template-columns: minmax(0, 1fr); }
   .chat__nav { display: none; }
   .chat__top { padding: var(--space-2) var(--space-4); }
+  /* AI 탭: 두 줄로 접히지 않고 한 줄로 두어 옆으로 밀어 넘긴다 */
+  .chat__switch {
+    display: flex; flex-wrap: nowrap; width: 100%;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity; scrollbar-width: none;
+  }
+  .chat__switch::-webkit-scrollbar { display: none; }
+  .chat__switch-btn { flex: none; scroll-snap-align: start; white-space: nowrap; }
   .chat__intro { width: calc(100% - var(--space-8)); }
   .reflow__header-inner { padding: var(--space-4); }
   .reflow__inner { padding: var(--space-4); }
@@ -1157,6 +1165,15 @@ body[data-view="panel"] .summary-card--selected:hover {
 .modal__head, .modal__foot { border-color: var(--glass-border); }
 .evidence__list, .guide-extra { background: color-mix(in srgb, var(--color-bg-gray) 70%, transparent); }
 
+/* 다크 모드에서는 그림자가 바탕에 묻혀 카드끼리 구분이 안 된다 → 다크에서만 1px 선을 더한다 */
+html[data-theme="dark"] .summary-card,
+html[data-theme="dark"] .filter-bar,
+html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .evidence__bubble {
+  border: 1px solid var(--color-border-default);
+}
+html[data-theme="dark"] .summary-card:not(.summary-card--selected):hover { border-color: var(--color-border-primary); }
+
 /* 투명도를 줄이도록 설정한 사람에게는 불투명 면으로 */
 @media (prefers-reduced-transparency: reduce) {
   :root, html[data-theme="dark"] { --glass: var(--color-bg-white); --glass-strong: var(--color-bg-white); }
@@ -1740,7 +1757,8 @@ function syncTabIndicator(group) {
   }
   const groupRect = group.getBoundingClientRect();
   const activeRect = active.getBoundingClientRect();
-  const x = activeRect.left - groupRect.left;
+  // 탭 묶음이 옆으로 밀려 있으면(휴대폰) 그만큼 더해야 인디케이터가 같은 버튼 밑에 온다
+  const x = activeRect.left - groupRect.left + group.scrollLeft;
   const isUnderline = group.dataset.tabs === "underline";
   const height = isUnderline ? 2 : activeRect.height;
   const y = isUnderline
@@ -1824,7 +1842,9 @@ function renderChat() {
     const isUser = message.role === "user";
     return `<li class="chat__turn${isUser ? " chat__turn--user" : ""}"><span class="chat__role">${isUser ? "나" : escapeHtml(card.ai)}</span><p class="chat__text">${escapeHtml(message.text)}</p></li>`;
   }).join("");
-  syncTabIndicator(document.querySelector(".chat__switch"));
+  const switchGroup = document.querySelector(".chat__switch");
+  switchGroup.querySelector('[aria-pressed="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  syncTabIndicator(switchGroup);
   if (state.chatMounted && !prefersReducedMotion()) {
     $("chat-thread").animate(
       [{ opacity: 0.55 }, { opacity: 1 }],
